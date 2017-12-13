@@ -2,13 +2,18 @@
 
 var pattern = "https://www.reddit.com/*";
 
-function redirect(reqDetails) {
-    console.log("Redirecting from reddit...");
-    return {redirectUrl: browser.extension.getURL("redirect/blocked.html")};
+function blockingPages() {
+
+    function redirect(reqDetails) {
+        return {redirectUrl: browser.extension.getURL("redirect/blocked.html")};
+    }
+
+    browser.webRequest.onBeforeRequest.addListener(
+        redirect,
+        {urls: [pattern]}, 
+        ["blocking"]
+    );
+    console.log("Background received the message!");
 }
 
-browser.webRequest.onBeforeRequest.addListener(
-    redirect,
-    {urls: [pattern]}, 
-    ["blocking"]
-);
+browser.runtime.onMessage.addListener(blockingPages);
