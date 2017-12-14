@@ -1,22 +1,36 @@
 'use strict';
 
 var startBtn = document.getElementById('start');
+var theCountdown = CountdownTimer();
 
 // TODO check that multiple presses of this message does not reset timer
 // prob check this on the background script
-startBtn.addEventListener("click", workTimerMsg)
+startBtn.addEventListener("click", ()=> {
+    console.log("i've been clicked");
+    theCountdown.minutes(10); // TODO will be replaced with a variable
 
-function workTimerMsg() {
-    // TODO will need to check that a second press does not reset timer
-    browser.runtime.sendMessage({timer: "work"});
-}
+    sendBackgroundMsg('work'); // TODO replace string with variable once alternating is solved
+    theCountdown.start();
 
+})
 
 /**********************************************************************
-* Description: Sets up a listener for web requests and redirects sites on
-*               list to blocked html page. 
-* Parameters: None 
-* Returns: None 
+* sendBackgroundMsg
+* Description: Sends a message to the background script telling it
+                whether to listen/block web requests or not.
+* Parameters: blockOrUnblock = a string saying "block" or "unblock" 
+* Returns: None
+***********************************************************************/
+function sendBackgroundMsg(blockOrUnblock) {
+    browser.runtime.sendMessage({timer: blockOrUnblock});
+}
+
+/**********************************************************************
+* CountdownTimer
+* Description: Module representing a timer which counts down. 
+* Interface: .minutes = sets minutes
+* Parameters: 
+* Returns: 
 ***********************************************************************/
 function CountdownTimer() {
     const ONE_MIN = 60000;
@@ -60,10 +74,9 @@ function CountdownTimer() {
         })(locCountdownMins);
     }
 
-    publicAPI = {
+    var publicAPI = {
         minutes: setMins,
         start: startTimer
-
     };
 
     return publicAPI;
