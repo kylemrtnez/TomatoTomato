@@ -1,0 +1,16 @@
+html, body {
+    width: 200px;
+}
+
+.button {
+    margin: 5% auto;
+    padding: 5px;
+    text-align: center;
+    cursor: pointer;
+    background-color: #fffef5
+}
+
+#start:hover {
+    background-color: #3fb666
+}
+
