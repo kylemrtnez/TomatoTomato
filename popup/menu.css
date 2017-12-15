@@ -1,5 +1,6 @@
 html, body {
     width: 200px;
+    overflow: hidden;
 }
 
 .button {
@@ -7,10 +8,24 @@ html, body {
     padding: 5px;
     text-align: center;
     cursor: pointer;
-    background-color: #fffef5
+    background-color: #f3efc9
 }
 
 #start:hover {
     background-color: #3fb666
 }
 
+#timer-display {
+    font-size: 25px;
+    text-align: center;
+    margin: 10% auto;
+    padding: 5px;
+    cursor: default;
+    width: 100%;
+}
+
+#timer-display::after {
+    content: "\A Mins left";
+    font-size: 10px;
+    white-space: pre;
+}
