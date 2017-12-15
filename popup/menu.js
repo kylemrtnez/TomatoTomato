@@ -8,9 +8,13 @@ var theCountdown = CountdownTimer();
 startBtn.addEventListener("click", ()=> {
     console.log("i've been clicked");
     theCountdown.minutes(10); // TODO will be replaced with a variable
+    theCountdown.CdFunc(function() { 
+        return sendBackgroundMsg('unblock');
+    });
 
-    sendBackgroundMsg('work'); // TODO replace string with variable once alternating is solved
+    sendBackgroundMsg('block'); // TODO replace string with variable once alternating is solved
     theCountdown.start();
+
 
 })
 
@@ -22,7 +26,7 @@ startBtn.addEventListener("click", ()=> {
 * Returns: None
 ***********************************************************************/
 function sendBackgroundMsg(blockOrUnblock) {
-    browser.runtime.sendMessage({timer: blockOrUnblock});
+    browser.runtime.sendMessage({action: blockOrUnblock});
 }
 
 /**********************************************************************
@@ -36,6 +40,7 @@ function CountdownTimer() {
     const ONE_MIN = 60000;
     var countdownMins = 0; // how many minutes to countdown from
     var timeoutIds = [];   // stores timeoutIDs to be cancelled if paused
+    var countdownFunc = null;
 
     /**********************************************************************
     * setMins
@@ -48,6 +53,17 @@ function CountdownTimer() {
     }
 
     /**********************************************************************
+    * setCountdownFunc
+    * Description: Sets a function to be called at the end of the 
+    *               countdown. Optional.
+    * Parameters:  theFunc = the function to be called at end of countdown
+    * Returns: None
+    ***********************************************************************/
+    function setCountdownFunc(theFunc) {
+        countdownFunc = theFunc;
+    }
+    
+    /**********************************************************************
     * startTimer
     * Description: Starts timer countdown. 
     * Parameters: None
@@ -55,13 +71,13 @@ function CountdownTimer() {
     ***********************************************************************/
     function startTimer() {
         var locCountdownMins = countdownMins;
+        var totalDelay = (locCountdownMins * 1000 + 1000);
 
         // recursively calls setTimeout for each minute to countdown from
         // needed to be recursive because loops don't wait for setTimeout
         // stores timeoutIDs in array
         (function oneMinAction(minsRemaining) {
             if (minsRemaining != 0) {
-                console.log(timeoutIds); // test
                 timeoutIds.push(
                     window.setTimeout(()=> {
                         minsRemaining--;
@@ -72,11 +88,20 @@ function CountdownTimer() {
                 );
             }
         })(locCountdownMins);
+        // call function at end of countdown if it exists
+        window.setTimeout(()=> {
+            if (countdownFunc != null) {
+                console.log("The countdown function check worked");
+                countdownFunc();
+            }
+        }, totalDelay);
     }
+
 
     var publicAPI = {
         minutes: setMins,
-        start: startTimer
+        start: startTimer,
+        CdFunc: setCountdownFunc
     };
 
     return publicAPI;

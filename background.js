@@ -2,9 +2,11 @@
 
 var pattern = "https://www.reddit.com/*";
 var wait = 10000;
-
+var original = Receiver();
 // Listener for message from popup. 
-browser.runtime.onMessage.addListener(blockingPages);
+browser.runtime.onMessage.addListener(original.decipher);
+
+
 
 /**********************************************************************
 * Description: Sets up a listener for web requests and redirects sites on
@@ -12,14 +14,41 @@ browser.runtime.onMessage.addListener(blockingPages);
 * Parameters: None 
 * Returns: None 
 ***********************************************************************/
-function blockingPages() {
-    browser.webRequest.onBeforeRequest.addListener(
-        redirect,
-        {urls: [pattern]}, 
-        ["blocking"]
-    );
-
-    window.setTimeout(unblockPages, wait);
+function Receiver() {
+    function decode(message) {
+        // see what type of message it is
+        // if block message, start blocking
+        if (message.action == "block") {
+            if (!browser.webRequest.onBeforeRequest.hasListener(redirect)) {
+                console.log("redirection added");
+                browser.webRequest.onBeforeRequest.addListener(
+                    redirect,
+                    {urls: [pattern]}, 
+                    ["blocking"]
+                );
+            }
+        }
+        else { 
+        //(message.action == "unblock") 
+            console.log("Unblock has successfully been received");
+            browser.webRequest.onBeforeRequest.removeListener(redirect);
+            console.log(browser.webRequest.onBeforeRequest.hasListener(redirect));
+        } 
+    }
+    /**********************************************************************
+    * blockPages
+    * Description: Sets up a listener for web requests and redirects sites
+    *               on list to an extension html page.
+    * Parameters: None
+    * Returns: None
+    ***********************************************************************/
+    function blockPages() {
+        browser.webRequest.onBeforeRequest.addListener(
+            redirect,
+            {urls: [pattern]}, 
+            ["blocking"]
+        );
+    }
 
     /**********************************************************************
     * Description: Provides new URL to redirect requests to
@@ -39,22 +68,14 @@ function blockingPages() {
     function unblockPages() {
         browser.webRequest.onBeforeRequest.removeListener(redirect);
     }
+
+    var publicAPI = {
+        decipher: decode
+    };
+
+    return publicAPI;
 }
 
 
 
-/**********************************************************************
-* 
-* Description: 
-* Parameters: 
-* Returns: 
-***********************************************************************/
-function something(param) {
-    // if it is a work session
-    if (param == "work") {
-       blockingPages(); 
-    }
-    // else 
-    // something with the timer for a break session
-}
 
