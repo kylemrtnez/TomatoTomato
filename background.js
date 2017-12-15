@@ -20,19 +20,12 @@ function Receiver() {
         // if block message, start blocking
         if (message.action == "block") {
             if (!browser.webRequest.onBeforeRequest.hasListener(redirect)) {
-                console.log("redirection added");
-                browser.webRequest.onBeforeRequest.addListener(
-                    redirect,
-                    {urls: [pattern]}, 
-                    ["blocking"]
-                );
+               blockPages(); 
             }
         }
         else { 
         //(message.action == "unblock") 
-            console.log("Unblock has successfully been received");
-            browser.webRequest.onBeforeRequest.removeListener(redirect);
-            console.log(browser.webRequest.onBeforeRequest.hasListener(redirect));
+            unblockPages();
         } 
     }
     /**********************************************************************

@@ -91,7 +91,6 @@ function CountdownTimer() {
         // call function at end of countdown if it exists
         window.setTimeout(()=> {
             if (countdownFunc != null) {
-                console.log("The countdown function check worked");
                 countdownFunc();
             }
         }, totalDelay);
