@@ -1,0 +1,27 @@
+{
+
+    "manifest_version": 2,
+    "name": "pomodeegzy",
+    "version": "0.1",
+
+    "description": "A Pomodoro/Focus timer extension that blocks distracting websites during your work sessions.", 
+
+    "icons": {
+        "48": "Tomato.svg"
+    },
+
+    "permissions": [
+        "webRequest",
+        "webRequestBlocking",
+        "<all_urls>"
+    ],
+
+    "web_accessible_resources": [
+        "redirect/blocked.html",
+        "redirect/blocked.css"
+    ],
+
+    "background": {
+        "scripts":["background.js"]
+    }
+}

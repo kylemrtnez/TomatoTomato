@@ -1,0 +1,9 @@
+html, body {
+    width: 100%;
+}
+
+div {
+    margin: 5% auto;
+    padding: 5px;
+    text-align: center;
+}
