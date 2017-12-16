@@ -7,6 +7,16 @@ var original = bgReceiver();
 browser.runtime.onMessage.addListener(original.decipher);
 
 
+/**********************************************************************
+* sendBackgroundMsg
+* Description: Sends a message to the background script telling it
+                whether to listen/block web requests or not.
+* Parameters: blockOrUnblock = a string saying "block" or "unblock" 
+* Returns: None
+***********************************************************************/
+function sendMenuMsg(minutes) {
+    browser.runtime.sendMessage({uMinutes: minutes});
+}
 
 /**********************************************************************
 * Description: Sets up a listener for web requests and redirects sites on
@@ -22,6 +32,8 @@ function bgReceiver() {
             if (!browser.webRequest.onBeforeRequest.hasListener(redirect)) {
                blockPages(); 
                // TODO create a timer here
+               var myCountdown = createTimer();
+               myCountdown.start();
             }
         }
         else { 
@@ -73,6 +85,7 @@ function bgReceiver() {
         var theCountdown = CountdownTimer();
         theCountdown.minutes(10);     // TODO replace '10' with a variable 
         theCountdown.cdFunc(unblockPages);
+        theCountdown.dispFunc(sendMenuMsg);
 
         return theCountdown;
     }
