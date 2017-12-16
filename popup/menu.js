@@ -1,21 +1,21 @@
 'use strict';
 
 var startBtn = document.getElementById('start');
+var defaultWorkMins = 10;
 var theCountdown = CountdownTimer();
+theCountdown.dispFunc(updateDisplay);
+updateDisplay(defaultWorkMins);
 
-// TODO check that multiple presses of this message does not reset timer
-// prob check this on the background script
 startBtn.addEventListener("click", ()=> {
-    console.log("i've been clicked");
+    // set minutes, inside listener so minutes can be changed
     theCountdown.minutes(10); // TODO will be replaced with a variable
-    theCountdown.CdFunc(function() { 
-        return sendBackgroundMsg('unblock');
-    });
-
+    // set function to call after timer is up
+    theCountdown.cdFunc(function() { 
+            return sendBackgroundMsg('unblock');
+        });
+   
     sendBackgroundMsg('block'); // TODO replace string with variable once alternating is solved
     theCountdown.start();
-
-
 })
 
 /**********************************************************************
@@ -30,6 +30,18 @@ function sendBackgroundMsg(blockOrUnblock) {
 }
 
 /**********************************************************************
+* updateDisplay
+* Description: Updates timer display with minutes remaining in menu
+* Parameters: updatedMins = integer to change display 
+* Returns: 
+***********************************************************************/
+function updateDisplay(updatedMins) {
+    var timerDisplay = document.getElementById('timer-display');
+
+    timerDisplay.textContent = updatedMins;
+}
+
+/**********************************************************************
 * CountdownTimer
 * Description: Module representing a timer which counts down. 
 * Interface: .minutes = sets minutes
@@ -41,6 +53,7 @@ function CountdownTimer() {
     var countdownMins = 0; // how many minutes to countdown from
     var timeoutIds = [];   // stores timeoutIDs to be cancelled if paused
     var countdownFunc = null;
+    var displayFunc = null;
 
     /**********************************************************************
     * setMins
@@ -62,6 +75,17 @@ function CountdownTimer() {
     function setCountdownFunc(theFunc) {
         countdownFunc = theFunc;
     }
+
+    /**********************************************************************
+    * setDisplayFunc
+    * Description: Sets a function to be called with the intent of updating
+    *               a display as the countdown progresses
+    * Parameters: dFunc = the function provided to the timer 
+    * Returns: None 
+    ***********************************************************************/
+    function setDisplayFunc(dFunc) {
+        displayFunc = dFunc;
+    }
     
     /**********************************************************************
     * startTimer
@@ -81,7 +105,11 @@ function CountdownTimer() {
                 timeoutIds.push(
                     window.setTimeout(()=> {
                         minsRemaining--;
-                        // TODO call update display here
+
+                        if (displayFunc != null) {
+                            displayFunc(minsRemaining);
+                        }
+
                         console.log(minsRemaining); // test
                         oneMinAction(minsRemaining);
                     }, 1000)
@@ -100,7 +128,8 @@ function CountdownTimer() {
     var publicAPI = {
         minutes: setMins,
         start: startTimer,
-        CdFunc: setCountdownFunc
+        cdFunc: setCountdownFunc,
+        dispFunc: setDisplayFunc
     };
 
     return publicAPI;
