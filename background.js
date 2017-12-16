@@ -2,16 +2,16 @@
 
 var pattern = "https://www.reddit.com/*";
 var wait = 10000;
-var original = bgReceiver();
+var original = BgReceiver();
 // Listener for message from popup. 
 browser.runtime.onMessage.addListener(original.decipher);
 
 
 /**********************************************************************
-* sendBackgroundMsg
-* Description: Sends a message to the background script telling it
+* sendMenuMsg
+* Description: Sends a message to the popup menu telling it
                 whether to listen/block web requests or not.
-* Parameters: blockOrUnblock = a string saying "block" or "unblock" 
+* Parameters: minutes = number to display in popup menu
 * Returns: None
 ***********************************************************************/
 function sendMenuMsg(minutes) {
@@ -24,14 +24,14 @@ function sendMenuMsg(minutes) {
 * Parameters: None 
 * Returns: None 
 ***********************************************************************/
-function bgReceiver() {
+function BgReceiver() {
     function decode(message) {
         // see what type of message it is
         // if block message, start blocking
         if (message.action == "block") {
             if (!browser.webRequest.onBeforeRequest.hasListener(redirect)) {
                blockPages(); 
-               // TODO create a timer here
+
                var myCountdown = createTimer();
                myCountdown.start();
             }
@@ -78,7 +78,7 @@ function bgReceiver() {
     /**********************************************************************
     * createTimer
     * Description: Creates a countdown timer
-    * Parameters: 
+    * Parameters: None
     * Returns: A countdown timer object 
     ***********************************************************************/
     function createTimer() {
@@ -102,8 +102,13 @@ function bgReceiver() {
 * CountdownTimer
 * Description: Module representing a timer which counts down. 
 * Interface: .minutes = sets minutes
-* Parameters: 
-* Returns: 
+*            .start = starts countdown
+*            .cdFunc = assigns a function to be called when countdown
+*                       ends
+*            .dispFunc = assigns a function to be called at each tick
+*                         of the countdown
+* Parameters: None 
+* Returns: Public interface to interact with CountdownTimer object 
 ***********************************************************************/
 function CountdownTimer() {
     const ONE_MIN = 60000;
