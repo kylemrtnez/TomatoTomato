@@ -2,7 +2,7 @@
 
 var pattern = "https://www.reddit.com/*";
 var wait = 10000;
-var original = Receiver();
+var original = bgReceiver();
 // Listener for message from popup. 
 browser.runtime.onMessage.addListener(original.decipher);
 
@@ -14,13 +14,14 @@ browser.runtime.onMessage.addListener(original.decipher);
 * Parameters: None 
 * Returns: None 
 ***********************************************************************/
-function Receiver() {
+function bgReceiver() {
     function decode(message) {
         // see what type of message it is
         // if block message, start blocking
         if (message.action == "block") {
             if (!browser.webRequest.onBeforeRequest.hasListener(redirect)) {
                blockPages(); 
+               // TODO create a timer here
             }
         }
         else { 
@@ -62,6 +63,21 @@ function Receiver() {
         browser.webRequest.onBeforeRequest.removeListener(redirect);
     }
 
+    /**********************************************************************
+    * createTimer
+    * Description: Creates a countdown timer
+    * Parameters: 
+    * Returns: A countdown timer object 
+    ***********************************************************************/
+    function createTimer() {
+        var theCountdown = CountdownTimer();
+        theCountdown.minutes(10);     // TODO replace '10' with a variable 
+        theCountdown.cdFunc(unblockPages);
+
+        return theCountdown;
+    }
+    
+
     var publicAPI = {
         decipher: decode
     };
@@ -69,6 +85,99 @@ function Receiver() {
     return publicAPI;
 }
 
+/**********************************************************************
+* CountdownTimer
+* Description: Module representing a timer which counts down. 
+* Interface: .minutes = sets minutes
+* Parameters: 
+* Returns: 
+***********************************************************************/
+function CountdownTimer() {
+    const ONE_MIN = 60000;
+    var countdownMins = 0; // how many minutes to countdown from
+    var timeoutIds = [];   // stores timeoutIDs to be cancelled if paused
+    var countdownFunc = null;
+    var displayFunc = null;
+
+    /**********************************************************************
+    * setMins
+    * Description: Sets minutes to be counted down from
+    * Parameters: mins = number of minutes to set
+    * Returns: None
+    ***********************************************************************/
+    function setMins(mins) {
+        countdownMins = mins;
+    }
+
+    /**********************************************************************
+    * setCountdownFunc
+    * Description: Sets a function to be called at the end of the 
+    *               countdown. Optional.
+    * Parameters:  theFunc = the function to be called at end of countdown
+    * Returns: None
+    ***********************************************************************/
+    function setCountdownFunc(theFunc) {
+        countdownFunc = theFunc;
+    }
+
+    /**********************************************************************
+    * setDisplayFunc
+    * Description: Sets a function to be called with the intent of updating
+    *               a display as the countdown progresses
+    * Parameters: dFunc = the function provided to the timer 
+    * Returns: None 
+    ***********************************************************************/
+    function setDisplayFunc(dFunc) {
+        displayFunc = dFunc;
+    }
+    
+    /**********************************************************************
+    * startTimer
+    * Description: Starts timer countdown. 
+    * Parameters: None
+    * Returns: None
+    ***********************************************************************/
+    function startTimer() {
+        var locCountdownMins = countdownMins;
+        var totalDelay = (locCountdownMins * 1000 + 1000);
+
+        // recursively calls setTimeout for each minute to countdown from
+        // needed to be recursive because loops don't wait for setTimeout
+        // stores timeoutIDs in array
+        (function oneMinAction(minsRemaining) {
+            if (minsRemaining != 0) {
+                timeoutIds.push(
+                    window.setTimeout(()=> {
+                        minsRemaining--;
+
+                        if (displayFunc != null) {
+                            displayFunc(minsRemaining);
+                        }
+
+                        console.log(minsRemaining); // test
+                        oneMinAction(minsRemaining);
+                    }, 1000)
+                );
+            }
+        })(locCountdownMins);
+        // call function at end of countdown if it exists
+        window.setTimeout(()=> {
+            if (countdownFunc != null) {
+                countdownFunc();
+            }
+        }, totalDelay);
+    }
+
+
+    var publicAPI = {
+        minutes: setMins,
+        start: startTimer,
+        cdFunc: setCountdownFunc,
+        dispFunc: setDisplayFunc
+    };
+
+    return publicAPI;
+}
 
 
 
