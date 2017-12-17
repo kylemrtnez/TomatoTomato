@@ -11,7 +11,7 @@ html, body {
     background-color: #f3efc9
 }
 
-#start:hover {
+.button:hover {
     background-color: #3fb666
 }
 

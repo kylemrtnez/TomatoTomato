@@ -1,6 +1,7 @@
 'use strict';
 
 var startBtn = document.getElementById('start');
+var settingsBtn = document.getElementById('settings');
 var defaultWorkMins = 10;
 var theCountdown = CountdownTimer();
 theCountdown.dispFunc(updateDisplay);
@@ -16,6 +17,11 @@ startBtn.addEventListener("click", ()=> {
    
     sendBackgroundMsg('block'); // TODO replace string with variable once alternating is solved
     theCountdown.start();
+})
+
+// Open options extension options page when settings button is clicked
+settingsBtn.addEventListener("click", ()=> {
+    var opening = browser.runtime.openOptionsPage();
 })
 
 /**********************************************************************
