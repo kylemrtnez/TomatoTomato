@@ -14,7 +14,8 @@
     "permissions": [
         "webRequest",
         "webRequestBlocking",
-        "<all_urls>"
+        "<all_urls>",
+        "storage"
     ],
 
     "web_accessible_resources": [
@@ -24,6 +25,10 @@
 
     "background": {
         "scripts":["background.js"]
+    },
+
+    "options_ui": {
+        "page": "options/options.html"
     },
 
     "browser_action": {
