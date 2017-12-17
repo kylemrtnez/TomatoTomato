@@ -1,3 +1,7 @@
+//TODO: Add more settings
+//TODO: Add restore defaults
+//TODO: Support list of patterns
+
 // Get the document ids
 const workLengthInput   = document.querySelector("#workLength");
 const blockPatternInput = document.querySelector("#blockPattern");
