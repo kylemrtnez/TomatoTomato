@@ -1,6 +1,7 @@
 'use strict';
 
 var startBtn = document.getElementById('start');
+var settingsBtn = document.getElementById('settings');
 var defaultWorkMins = 10;
 
 updateDisplay(defaultWorkMins);
@@ -11,6 +12,11 @@ browser.runtime.onMessage.addListener(function (message) {
 
 startBtn.addEventListener("click", ()=> {
     sendBackgroundMsg('block'); // TODO replace string with variable once alternating is solved
+})
+
+// Open options extension options page when settings button is clicked
+settingsBtn.addEventListener("click", ()=> {
+    var opening = browser.runtime.openOptionsPage();
 })
 
 /**********************************************************************
