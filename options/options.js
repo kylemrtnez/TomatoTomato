@@ -6,7 +6,7 @@
 const workLengthInput   = document.querySelector("#workLength");
 const blockPatternInput = document.querySelector("#blockPattern");
 const workLengthDefault = "25";
-const blockPatternDefault = "*://www.reddit.com*";
+const blockPatternDefault = "*://www.reddit.com/*";
 
 /**********************************************************************
 * Description: Saves the user settings to local storage

@@ -1,9 +1,14 @@
 'use strict';
 
 const patternDefault = "*://www.reddit.com/*";
+const workLengthDefault = 25;
 var original = BgReceiver();
 // Listener for message from popup. 
 browser.runtime.onMessage.addListener(original.decipher);
+
+function onError(error) {
+    console.log(`Error: ${error}`);
+}
 
 /**********************************************************************
 * sendMenuMsg
@@ -37,10 +42,15 @@ function BgReceiver() {
                 getting.then( (item)=>{
                     var pattern = item.blockPattern || patternDefault;
                     blockPages(pattern); 
-                }, onError);
-
-               var myCountdown = createTimer();
-               myCountdown.start();
+                },onError);
+                
+                // Sets the work length to what's in local storage
+                var getting = browser.storage.local.get("workLength");
+                getting.then( (item)=>{
+                    var workLength = item.workLength || workLengthDefault;
+                    var myCountdown = createTimer(workLength);
+                    myCountdown.start();
+                },onError);
             }
         }
         else { 
@@ -85,12 +95,12 @@ function BgReceiver() {
     /**********************************************************************
     * createTimer
     * Description: Creates a countdown timer
-    * Parameters: None
+    * Parameters: length
     * Returns: A countdown timer object 
     ***********************************************************************/
-    function createTimer() {
+    function createTimer(length) {
         var theCountdown = CountdownTimer();
-        theCountdown.minutes(10);     // TODO replace '10' with a variable 
+        theCountdown.minutes(length);     
         theCountdown.cdFunc(unblockPages);
         theCountdown.dispFunc(sendMenuMsg);
 

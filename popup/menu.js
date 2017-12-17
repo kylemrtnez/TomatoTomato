@@ -2,7 +2,9 @@
 
 var startBtn = document.getElementById('start');
 var settingsBtn = document.getElementById('settings');
-var defaultWorkMins = 10;
+var defaultWorkMins = 25; // TODO should get this from background immediately,
+                          //      because popup always shows default before
+                          //      updating
 
 updateDisplay(defaultWorkMins);
 
