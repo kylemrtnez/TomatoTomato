@@ -23,12 +23,6 @@ var original = Receiver();
 // Listener for message from popup. 
 browser.runtime.onMessage.addListener(original.decipher);
 
-// Sets the pattern to what's in local storage
-var getting = browser.storage.local.get("blockPattern");
-getting.then( (item)=>{
-    var pattern = item.blockPattern || patternDefault;
-}, onError);
-
 /**********************************************************************
 * Description: Sets up a listener for web requests and redirects sites on
 *               list to blocked html page. 
@@ -41,7 +35,12 @@ function BgReceiver() {
         // if block message, start blocking
         if (message.action == "block") {
             if (!browser.webRequest.onBeforeRequest.hasListener(redirect)) {
-               blockPages(); 
+                // Sets the pattern to what's in local storage
+                var getting = browser.storage.local.get("blockPattern");
+                getting.then( (item)=>{
+                    var pattern = item.blockPattern || patternDefault;
+                    blockPages(pattern); 
+                }, onError);
 
                var myCountdown = createTimer();
                myCountdown.start();
@@ -59,7 +58,7 @@ function BgReceiver() {
     * Parameters: None
     * Returns: None
     ***********************************************************************/
-    function blockPages() {
+    function blockPages(pattern) {
         browser.webRequest.onBeforeRequest.addListener(
             redirect,
             {urls: [pattern]}, 
