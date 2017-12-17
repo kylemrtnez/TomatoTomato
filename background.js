@@ -21,10 +21,6 @@ function sendMenuMsg(minutes) {
     browser.runtime.sendMessage({uMinutes: minutes});
 }
 
-var original = Receiver();
-// Listener for message from popup. 
-browser.runtime.onMessage.addListener(original.decipher);
-
 /**********************************************************************
 * Description: Sets up a listener for web requests and redirects sites on
 *               list to blocked html page. 
