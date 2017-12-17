@@ -1,7 +1,7 @@
 'use strict';
 
 var pattern = "https://www.reddit.com/*";
-var wait = 10000;
+const patternDefault = "*://www.reddit.com/*";
 var original = BgReceiver();
 // Listener for message from popup. 
 browser.runtime.onMessage.addListener(original.decipher);
@@ -17,6 +17,17 @@ browser.runtime.onMessage.addListener(original.decipher);
 function sendMenuMsg(minutes) {
     browser.runtime.sendMessage({uMinutes: minutes});
 }
+
+
+var original = Receiver();
+// Listener for message from popup. 
+browser.runtime.onMessage.addListener(original.decipher);
+
+// Sets the pattern to what's in local storage
+var getting = browser.storage.local.get("blockPattern");
+getting.then( (item)=>{
+    var pattern = item.blockPattern || patternDefault;
+}, onError);
 
 /**********************************************************************
 * Description: Sets up a listener for web requests and redirects sites on
