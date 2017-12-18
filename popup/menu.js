@@ -1,7 +1,10 @@
 'use strict';
 
 var startBtn = document.getElementById('start');
-var defaultWorkMins = 10;
+var settingsBtn = document.getElementById('settings');
+var defaultWorkMins = 25; // TODO should get this from background immediately,
+                          //      because popup always shows default before
+                          //      updating
 
 updateDisplay(defaultWorkMins);
 
@@ -11,6 +14,11 @@ browser.runtime.onMessage.addListener(function (message) {
 
 startBtn.addEventListener("click", ()=> {
     sendBackgroundMsg('block'); // TODO replace string with variable once alternating is solved
+})
+
+// Open options extension options page when settings button is clicked
+settingsBtn.addEventListener("click", ()=> {
+    var opening = browser.runtime.openOptionsPage();
 })
 
 /**********************************************************************

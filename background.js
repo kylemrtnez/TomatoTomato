@@ -1,11 +1,14 @@
 'use strict';
 
-var pattern = "https://www.reddit.com/*";
-var wait = 10000;
+const patternDefault = "*://www.reddit.com/*";
+const workLengthDefault = 25;
 var original = BgReceiver();
 // Listener for message from popup. 
 browser.runtime.onMessage.addListener(original.decipher);
 
+function onError(error) {
+    console.log(`Error: ${error}`);
+}
 
 /**********************************************************************
 * sendMenuMsg
@@ -30,10 +33,13 @@ function BgReceiver() {
         // if block message, start blocking
         if (message.action == "block") {
             if (!browser.webRequest.onBeforeRequest.hasListener(redirect)) {
-               blockPages(); 
 
-               var myCountdown = createTimer();
-               myCountdown.start();
+                // Get the stored block patterns and work session length and start blocking
+                browser.storage.local.get(["blockPattern", "workLength"]).then( (item) => {
+                    blockPages( item.blockPattern || patternDefault );
+                    var myCountdown = createTimer(item.workLength || workLengthDefault);
+                    myCountdown.start();
+                },onError); // TODO: Stop timer if there's an error. Would the timer have started if we reach this error callback?
             }
         }
         else { 
@@ -48,7 +54,7 @@ function BgReceiver() {
     * Parameters: None
     * Returns: None
     ***********************************************************************/
-    function blockPages() {
+    function blockPages(pattern) {
         browser.webRequest.onBeforeRequest.addListener(
             redirect,
             {urls: [pattern]}, 
@@ -78,12 +84,12 @@ function BgReceiver() {
     /**********************************************************************
     * createTimer
     * Description: Creates a countdown timer
-    * Parameters: None
+    * Parameters: length
     * Returns: A countdown timer object 
     ***********************************************************************/
-    function createTimer() {
+    function createTimer(length) {
         var theCountdown = CountdownTimer();
-        theCountdown.minutes(10);     // TODO replace '10' with a variable 
+        theCountdown.minutes(length);     
         theCountdown.cdFunc(unblockPages);
         theCountdown.dispFunc(sendMenuMsg);
 
