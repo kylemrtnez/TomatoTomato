@@ -33,20 +33,13 @@ function BgReceiver() {
         // if block message, start blocking
         if (message.action == "block") {
             if (!browser.webRequest.onBeforeRequest.hasListener(redirect)) {
-                // Sets the pattern to what's in local storage
-                var getting = browser.storage.local.get("blockPattern");
-                getting.then( (item)=>{
-                    var pattern = item.blockPattern || patternDefault;
-                    blockPages(pattern); 
-                },onError);
-                
-                // Sets the work length to what's in local storage
-                var getting = browser.storage.local.get("workLength");
-                getting.then( (item)=>{
-                    var workLength = item.workLength || workLengthDefault;
-                    var myCountdown = createTimer(workLength);
+
+                // Get the stored block patterns and work session length and start blocking
+                browser.storage.local.get(["blockPattern", "workLength"]).then( (item) => {
+                    blockPages( item.blockPattern || patternDefault );
+                    var myCountdown = createTimer(item.workLength || workLengthDefault);
                     myCountdown.start();
-                },onError);
+                },onError); // TODO: Stop timer if there's an error. Would the timer have started if we reach this error callback?
             }
         }
         else { 
