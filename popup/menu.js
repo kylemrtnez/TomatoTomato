@@ -2,11 +2,11 @@
 
 var startBtn = document.getElementById('start');
 var settingsBtn = document.getElementById('settings');
-var defaultWorkMins = 25; // TODO should get this from background immediately,
+var displayMins; // TODO should get this from background immediately,
                           //      because popup always shows default before
                           //      updating
 
-updateDisplay(defaultWorkMins);
+updateDisplay(displayMins || 'tomato icon');
 
 browser.runtime.onMessage.addListener(function (message) {
     updateDisplay(message.uMinutes);
@@ -40,7 +40,7 @@ function sendBackgroundMsg(blockOrUnblock) {
 ***********************************************************************/
 function updateDisplay(updatedMins) {
     var timerDisplay = document.getElementById('timer-display');
-
+    displayMins = updatedMins; 
     timerDisplay.textContent = updatedMins;
 }
 
