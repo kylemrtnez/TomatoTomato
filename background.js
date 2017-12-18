@@ -31,22 +31,32 @@ function BgReceiver() {
     function decode(message) {
         // see what type of message it is
         // if block message, start blocking
-        if (message.action == "block") {
-            if (!browser.webRequest.onBeforeRequest.hasListener(redirect)) {
+        switch (message.action) {
+            case 'block':
+                if (!browser.webRequest.onBeforeRequest.hasListener(redirect)) {
+                    // Get the stored block patterns and work session length and start blocking
+                    browser.storage.local.get(["blockPattern", "workLength"]).then( (item) => {
+                        blockPages( item.blockPattern || patternDefault );
+                        var myCountdown = createTimer(item.workLength || workLengthDefault);
+                        myCountdown.start();
+                    },onError); // TODO: Stop timer if there's an error. Would the timer have started if we reach this error callback?
+                }
+                break;
 
-                // Get the stored block patterns and work session length and start blocking
-                browser.storage.local.get(["blockPattern", "workLength"]).then( (item) => {
-                    blockPages( item.blockPattern || patternDefault );
-                    var myCountdown = createTimer(item.workLength || workLengthDefault);
-                    myCountdown.start();
-                },onError); // TODO: Stop timer if there's an error. Would the timer have started if we reach this error callback?
-            }
+            case 'unblock':
+                unblockPages();
+                break;
+        
+            case 'updateMins':
+                
+                break;
+
+            default:
+
+                break;
         }
-        else { 
-        //(message.action == "unblock") 
-            unblockPages();
-        } 
     }
+
     /**********************************************************************
     * blockPages
     * Description: Sets up a listener for web requests and redirects sites

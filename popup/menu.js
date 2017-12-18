@@ -2,9 +2,9 @@
 
 var startBtn = document.getElementById('start');
 var settingsBtn = document.getElementById('settings');
-var displayMins; // TODO should get this from background immediately,
-                          //      because popup always shows default before
-                          //      updating
+var displayMins = function () {
+    sendBackgroundMsg('updateMins');
+}
 
 updateDisplay(displayMins || 'tomato icon');
 
