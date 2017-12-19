@@ -2,15 +2,15 @@
 
 var startBtn = document.getElementById('start');
 var settingsBtn = document.getElementById('settings');
-var displayMins = function () {
+var displayMins = null;
+document.addEventListener('DOMContentLoaded', function() {
     sendBackgroundMsg('updateMins');
-}
 
-updateDisplay(displayMins || 'tomato icon');
+    browser.runtime.onMessage.addListener(function (message) {
+        updateDisplay(message.uMinutes || 'tomato icon');
+    });
+})
 
-browser.runtime.onMessage.addListener(function (message) {
-    updateDisplay(message.uMinutes);
-});
 
 startBtn.addEventListener("click", ()=> {
     sendBackgroundMsg('block'); // TODO replace string with variable once alternating is solved
@@ -40,7 +40,6 @@ function sendBackgroundMsg(blockOrUnblock) {
 ***********************************************************************/
 function updateDisplay(updatedMins) {
     var timerDisplay = document.getElementById('timer-display');
-    displayMins = updatedMins; 
     timerDisplay.textContent = updatedMins;
 }
 

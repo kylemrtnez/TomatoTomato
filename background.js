@@ -31,13 +31,15 @@ function BgReceiver() {
     function decode(message) {
         // see what type of message it is
         // if block message, start blocking
+        var myCountdown = null;
+
         switch (message.action) {
             case 'block':
                 if (!browser.webRequest.onBeforeRequest.hasListener(redirect)) {
                     // Get the stored block patterns and work session length and start blocking
                     browser.storage.local.get(["blockPattern", "workLength"]).then( (item) => {
                         blockPages( item.blockPattern || patternDefault );
-                        var myCountdown = createTimer(item.workLength || workLengthDefault);
+                        myCountdown = createTimer(item.workLength || workLengthDefault);
                         myCountdown.start();
                     },onError); // TODO: Stop timer if there's an error. Would the timer have started if we reach this error callback?
                 }
@@ -48,7 +50,12 @@ function BgReceiver() {
                 break;
         
             case 'updateMins':
-                
+                if (myCountdown == null) {
+                    sendMenuMsg(null);
+                } 
+                else {
+                    sendMenuMsg(myCountdown.getCdMins);
+                }
                 break;
 
             default:
@@ -128,7 +135,7 @@ function BgReceiver() {
 ***********************************************************************/
 function CountdownTimer() {
     const ONE_MIN = 60000;
-    var countdownMins = 0; // how many minutes to countdown from
+    var countdownMins = null; // how many minutes to countdown from
     var timeoutIds = [];   // stores timeoutIDs to be cancelled if paused
     var countdownFunc = null;
     var displayFunc = null;
@@ -142,6 +149,17 @@ function CountdownTimer() {
     function setMins(mins) {
         countdownMins = mins;
     }
+
+    /**********************************************************************
+    * getMins
+    * Description: Gets minutes on the countdown
+    * Parameters: None
+    * Returns: countdownMins
+    ***********************************************************************/
+    function getMins() {
+        return countdownMins;
+    }
+    
 
     /**********************************************************************
     * setCountdownFunc
@@ -172,34 +190,30 @@ function CountdownTimer() {
     * Returns: None
     ***********************************************************************/
     function startTimer() {
-        var locCountdownMins = countdownMins;
+        var locCountdownMins = countdownMins || 0;
         var totalDelay = (locCountdownMins * 1000 + 1000);
 
-        // recursively calls setTimeout for each minute to countdown from
-        // needed to be recursive because loops don't wait for setTimeout
-        // stores timeoutIDs in array
-        (function oneMinAction(minsRemaining) {
-            if (minsRemaining != 0) {
-                timeoutIds.push(
-                    window.setTimeout(()=> {
-                        minsRemaining--;
+        // timer
+        var intervalID = window.setInterval(()=> {
+            locCountdownMins--;
 
-                        if (displayFunc != null) {
-                            displayFunc(minsRemaining);
-                        }
+            setMins(locCountdownMins);
 
-                        console.log(minsRemaining); // test
-                        oneMinAction(minsRemaining);
-                    }, 1000)
-                );
+            if (displayFunc != null) {
+                displayFunc(locCountdownMins);
             }
-        })(locCountdownMins);
-        // call function at end of countdown if it exists
-        window.setTimeout(()=> {
-            if (countdownFunc != null) {
-                countdownFunc();
+
+            console.log(locCountdownMins); // test
+            console.log(countdownMins);
+
+            if (locCountdownMins == 0) {
+                window.clearInterval(intervalID);
+
+                if (countdownFunc != null) {
+                    countdownFunc();
+                }   
             }
-        }, totalDelay);
+        }, 1000);
     }
 
 
@@ -207,7 +221,8 @@ function CountdownTimer() {
         minutes: setMins,
         start: startTimer,
         cdFunc: setCountdownFunc,
-        dispFunc: setDisplayFunc
+        dispFunc: setDisplayFunc,
+        getCdMins: getMins
     };
 
     return publicAPI;
