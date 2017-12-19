@@ -28,11 +28,15 @@ function sendMenuMsg(minutes) {
 * Returns: None 
 ***********************************************************************/
 function BgReceiver() {
+    var myCountdown = null;
+    /**********************************************************************
+    * decode
+    * Description: Checks what message is received and routes to correct
+    *               action
+    * Parameters: The message object from onMessage listener
+    * Returns: None
+    ***********************************************************************/
     function decode(message) {
-        // see what type of message it is
-        // if block message, start blocking
-        var myCountdown = null;
-
         switch (message.action) {
             case 'block':
                 if (!browser.webRequest.onBeforeRequest.hasListener(redirect)) {
@@ -49,12 +53,13 @@ function BgReceiver() {
                 unblockPages();
                 break;
         
-            case 'updateMins':
+            case 'requestCurTimeRemaining':
+                console.log(typeof(myCountdown));
                 if (myCountdown == null) {
                     sendMenuMsg(null);
                 } 
                 else {
-                    sendMenuMsg(myCountdown.getCdMins);
+                    sendMenuMsg(myCountdown.getCdMins());
                 }
                 break;
 
@@ -134,7 +139,7 @@ function BgReceiver() {
 * Returns: Public interface to interact with CountdownTimer object 
 ***********************************************************************/
 function CountdownTimer() {
-    const ONE_MIN = 60000;
+    const MINUTES = 60000;
     var countdownMins = null; // how many minutes to countdown from
     var timeoutIds = [];   // stores timeoutIDs to be cancelled if paused
     var countdownFunc = null;
@@ -202,9 +207,6 @@ function CountdownTimer() {
             if (displayFunc != null) {
                 displayFunc(locCountdownMins);
             }
-
-            console.log(locCountdownMins); // test
-            console.log(countdownMins);
 
             if (locCountdownMins == 0) {
                 window.clearInterval(intervalID);

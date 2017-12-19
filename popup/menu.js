@@ -2,15 +2,14 @@
 
 var startBtn = document.getElementById('start');
 var settingsBtn = document.getElementById('settings');
-var displayMins = null;
-document.addEventListener('DOMContentLoaded', function() {
-    sendBackgroundMsg('updateMins');
 
-    browser.runtime.onMessage.addListener(function (message) {
-        updateDisplay(message.uMinutes || 'tomato icon');
-    });
+// message listener
+browser.runtime.onMessage.addListener(function (message) {
+    updateDisplay(message.uMinutes || 'tomato icon');
 })
 
+// update minutes when menu is opened
+sendBackgroundMsg('requestCurTimeRemaining');
 
 startBtn.addEventListener("click", ()=> {
     sendBackgroundMsg('block'); // TODO replace string with variable once alternating is solved
