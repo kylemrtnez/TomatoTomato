@@ -2,15 +2,14 @@
 
 var startBtn = document.getElementById('start');
 var settingsBtn = document.getElementById('settings');
-var defaultWorkMins = 25; // TODO should get this from background immediately,
-                          //      because popup always shows default before
-                          //      updating
 
-updateDisplay(defaultWorkMins);
-
+// message listener
 browser.runtime.onMessage.addListener(function (message) {
-    updateDisplay(message.uMinutes);
-});
+    updateDisplay(message.uMinutes || 'tomato icon');
+})
+
+// update minutes when menu is opened
+sendBackgroundMsg('requestCurTimeRemaining');
 
 startBtn.addEventListener("click", ()=> {
     sendBackgroundMsg('block'); // TODO replace string with variable once alternating is solved
@@ -40,7 +39,6 @@ function sendBackgroundMsg(blockOrUnblock) {
 ***********************************************************************/
 function updateDisplay(updatedMins) {
     var timerDisplay = document.getElementById('timer-display');
-
     timerDisplay.textContent = updatedMins;
 }
 
