@@ -1,6 +1,7 @@
 'use strict';
 
 var startBtn = document.getElementById('start');
+var stopBtn = document.getElementById('stop');
 var settingsBtn = document.getElementById('settings');
 
 // message listener
@@ -11,8 +12,14 @@ browser.runtime.onMessage.addListener(function (message) {
 // update minutes when menu is opened
 sendBackgroundMsg('requestCurTimeRemaining');
 
+// start button
 startBtn.addEventListener("click", ()=> {
     sendBackgroundMsg('block'); // TODO replace string with variable once alternating is solved
+})
+
+// stop button
+stopBtn.addEventListener("click", ()=> {
+    sendBackgroundMsg('unblock');
 })
 
 // Open options extension options page when settings button is clicked
