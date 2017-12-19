@@ -28,6 +28,8 @@ addSiteBtn.addEventListener("click", ()=> {
     var siteToAdd = websiteInput.value;
     var last = websiteSelect.options.length;
 
+    //TODO: Some regexrep magic to turn any website entry into a standard *://www.something.something/* format
+
     websiteSelect.options[last] = new Option(siteToAdd,last);
     websiteInput.value = null;
 });
