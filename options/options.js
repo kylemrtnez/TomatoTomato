@@ -1,5 +1,10 @@
-//TODO: Add more settings
 //TODO: Add restore defaults
+//TODO: Clean up variable names
+//TODO: Override 'enter' button function for 'Add' website
+//TODO: Add Whitelist options and switch for blacklist/whitelist
+//TODO: Enforce integer for timer length
+
+
 
 // Get the document ids
 var workLengthInput   = document.querySelector("#workLength");

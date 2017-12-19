@@ -7,12 +7,17 @@
     <body>
         <form>
             <label>Block Websites:</label><br>
+            <div>
             <select id="blockPatterns" multiple="true">
-            </select>
-            <div class="button" id="addSite">Add Site</div>
-            <div class="button" id="removeSite">Remove Website</div>
-            <label>Add: <input type="text" id="websiteInput"></label>
-            <label>Work Length: <input type="text" id="workLength"></label>
+            </select>            
+            <button id="removeSite">Remove</button>
+            </br>
+            </div>
+            <div>
+            <label><button id="addSite">Add</button>
+            <input type="text" id="websiteInput"></label>
+            </div></br>
+            <label>Work Length: <input type="text" id="workLength"></label></br></br>
             <button type="submit">Save</button>
         </form>
 
