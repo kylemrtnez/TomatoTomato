@@ -50,6 +50,7 @@ function BgReceiver() {
                 break;
 
             case 'unblock':
+                myCountdown.stop();
                 unblockPages();
                 break;
         
@@ -146,6 +147,7 @@ function CountdownTimer() {
     var timeoutIds = [];   // stores timeoutIDs to be cancelled if paused
     var countdownFunc = null;
     var displayFunc = null;
+    var intervalID = null;
 
     /**********************************************************************
     * setMins
@@ -201,7 +203,7 @@ function CountdownTimer() {
         var totalDelay = (locCountdownMins * 1000 + 1000);
 
         // timer
-        var intervalID = window.setInterval(()=> {
+        intervalID = window.setInterval(()=> {
             locCountdownMins--;
 
             setMins(locCountdownMins);
@@ -211,7 +213,7 @@ function CountdownTimer() {
             }
 
             if (locCountdownMins == 0) {
-                window.clearInterval(intervalID);
+                stopTimer();
 
                 if (countdownFunc != null) {
                     countdownFunc();
@@ -220,10 +222,23 @@ function CountdownTimer() {
         }, 1000);
     }
 
+    /**********************************************************************
+    * stopTimer
+    * Description: Stops the timer if there is one currently running
+    * Parameters: None
+    * Returns: None 
+    ***********************************************************************/
+    function stopTimer() {
+        if (intervalID) {
+            window.clearInterval(intervalID);
+            setMins(null);
+        }
+    }
 
     var publicAPI = {
         minutes: setMins,
         start: startTimer,
+        stop: stopTimer,
         cdFunc: setCountdownFunc,
         dispFunc: setDisplayFunc,
         getCdMins: getMins
