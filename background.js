@@ -1,6 +1,6 @@
 'use strict';
 
-const patternDefault = "*://www.reddit.com/*";
+const patternDefault = ["*://www.reddit.com/*", "*://www.facebook.com/*"];
 const workLengthDefault = 25;
 var original = BgReceiver();
 // Listener for message from popup. 
@@ -77,9 +77,11 @@ function BgReceiver() {
     * Returns: None
     ***********************************************************************/
     function blockPages(pattern) {
+        console.log(pattern);
+
         browser.webRequest.onBeforeRequest.addListener(
             redirect,
-            {urls: [pattern]}, 
+            {urls: pattern}, 
             ["blocking"]
         );
     }

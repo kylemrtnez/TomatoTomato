@@ -6,8 +6,18 @@
     </head>
     <body>
         <form>
-            <label>Block Pattern: <input type="text" id="blockPattern"></label><br>
-            <label>Work Length: <input type="text" id="workLength"></label>
+            <label>Block Websites:</label><br>
+            <div>
+            <select id="blockPatterns" multiple="true">
+            </select>            
+            <button id="removeSite">Remove</button>
+            </br>
+            </div>
+            <div>
+            <label><button id="addSite">Add</button>
+            <input type="text" id="websiteInput"></label>
+            </div></br>
+            <label>Work Length: <input type="text" id="workLength"></label></br></br>
             <button type="submit">Save</button>
         </form>
 
