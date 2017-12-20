@@ -233,6 +233,9 @@ function CountdownTimer() {
         var totalDelay = (locCountdownMins * 1000 + 1000);
 
         // timer
+        if (displayFunc != null) {
+            displayFunc(locCountdownMins);
+        }
         intervalID = window.setInterval(()=> {
             locCountdownMins--;
 
@@ -259,6 +262,7 @@ function CountdownTimer() {
     * Returns: None 
     ***********************************************************************/
     function stopTimer() {
+        displayFunc(null);
         if (intervalID) {
             window.clearInterval(intervalID);
             setMins(null);
