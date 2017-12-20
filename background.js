@@ -2,8 +2,9 @@
 
 const patternDefault = ["*://www.reddit.com/*", "*://www.facebook.com/*"];
 const workLengthDefault = 25;
+var restLengthDefault = 5;
+
 var original = BgReceiver();
-var testBreakLength = 5;
 // Listener for message from popup. 
 browser.runtime.onMessage.addListener(original.decipher);
 
@@ -121,8 +122,10 @@ function BgReceiver() {
         // check if on break, if not, start break timer and flip onBreak
         if (!onBreak) {
             onBreak = true;
-            myCountdown = createTimer(testBreakLength);
-            myCountdown.start();
+            browser.storage.local.get("restLength").then( (item) => {
+                myCountdown = createTimer(item.restLength || restLengthDefault); 
+                myCountdown.start();
+            },onError);
         } else {
             // if on break, flip flag to work and start blocking
             onBreak = false;
