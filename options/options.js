@@ -8,6 +8,7 @@
 
 // Get the document ids
 var workLengthInput   = document.querySelector("#workLength");
+var restLengthInput   = document.querySelector("#restLength");
 var addSiteBtn    = document.getElementById('addSite');
 var removeSiteBtn = document.getElementById('removeSite');
 var websiteSelect = document.getElementById('blockPatterns');
@@ -15,6 +16,7 @@ var websiteInput  = document.getElementById('websiteInput');
 
 // Set up defaults.
 var workLengthDefault = "25";
+var restLengthDefault = "5";
 var blockPatternDefault = ["*://www.reddit.com/*", "*://www.facebook.com/*"];
 
 // Restore settings to UI when document elements done loading.
@@ -57,6 +59,7 @@ function saveOptions(event) {
     //Save the settings in local storage
     browser.storage.local.set({
         workLength: workLengthInput.value,
+        restLength: restLengthInput.value,
         blockPattern: Array.apply(null, websiteSelect.options).map(function(el) { return el.text; }) // this crap is needed because HTMLSelectElement.Option returns stupid stuff
     });
 }
@@ -77,6 +80,7 @@ function restoreOptions() {
     function updateUI(restoredSettings) {
         // Update the timer value 
         workLengthInput.value   = restoredSettings.workLength    || workLengthDefault;
+        restLengthInput.value   = restoredSettings.restLength    || restLengthDefault;
 
         // If stored settings for blocked websites are found, use those.
         if(restoredSettings.blockPattern) {

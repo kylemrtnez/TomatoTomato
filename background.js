@@ -2,6 +2,8 @@
 
 const patternDefault = ["*://www.reddit.com/*", "*://www.facebook.com/*"];
 const workLengthDefault = 25;
+var restLengthDefault = 5;
+
 var original = BgReceiver();
 // Listener for message from popup. 
 browser.runtime.onMessage.addListener(original.decipher);
@@ -29,6 +31,8 @@ function sendMenuMsg(minutes) {
 ***********************************************************************/
 function BgReceiver() {
     var myCountdown = null;
+    var onBreak = true;
+
     /**********************************************************************
     * decode
     * Description: Checks what message is received and routes to correct
@@ -85,6 +89,7 @@ function BgReceiver() {
             {urls: pattern}, 
             ["blocking"]
         );
+        onBreak = false;
     }
 
     /**********************************************************************
@@ -104,7 +109,35 @@ function BgReceiver() {
     ***********************************************************************/
     function unblockPages() {
         browser.webRequest.onBeforeRequest.removeListener(redirect);
+        onBreak = true;
     }
+
+    /**********************************************************************
+    * 
+    * Description: 
+    * Parameters: 
+    * Returns: 
+    ***********************************************************************/
+    function endOfTimer() {
+        // check if on break, if not, start break timer and flip onBreak
+        if (!onBreak) {
+            onBreak = true;
+            browser.storage.local.get("restLength").then( (item) => {
+                myCountdown = createTimer(item.restLength || restLengthDefault); 
+                myCountdown.start();
+            },onError);
+        } else {
+            // if on break, flip flag to work and start blocking
+            onBreak = false;
+            browser.storage.local.get(["blockPattern", "workLength"]).then( (item) => {
+                blockPages( item.blockPattern || patternDefault );
+                myCountdown = createTimer(item.workLength || workLengthDefault);
+                myCountdown.start();
+            },onError);
+        }
+
+    }
+    
 
     /**********************************************************************
     * createTimer
@@ -115,7 +148,7 @@ function BgReceiver() {
     function createTimer(length) {
         var theCountdown = CountdownTimer();
         theCountdown.minutes(length);     
-        theCountdown.cdFunc(unblockPages);
+        theCountdown.cdFunc(endOfTimer);
         theCountdown.dispFunc(sendMenuMsg);
 
         return theCountdown;
@@ -203,6 +236,9 @@ function CountdownTimer() {
         var totalDelay = (locCountdownMins * 1000 + 1000);
 
         // timer
+        if (displayFunc != null) {
+            displayFunc(locCountdownMins);
+        }
         intervalID = window.setInterval(()=> {
             locCountdownMins--;
 
@@ -229,6 +265,7 @@ function CountdownTimer() {
     * Returns: None 
     ***********************************************************************/
     function stopTimer() {
+        displayFunc(null);
         if (intervalID) {
             window.clearInterval(intervalID);
             setMins(null);
