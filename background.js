@@ -1,10 +1,9 @@
 'use strict';
 
-import CycleManager from "cycleManager";
-
 const patternDefault = ["*://www.reddit.com/*", "*://www.facebook.com/*"];
 const workLengthDefault = 25;
 var restLengthDefault = 5;
+var longRestLengthDefault = 25;
 
 var original = BgReceiver();
 // Listener for message from popup. 
@@ -33,7 +32,7 @@ function sendMenuMsg(minutes) {
 ***********************************************************************/
 function BgReceiver() {
     var myCountdown = null;
-    var onBreak = true;
+    var cycleTracker = CycleManager();
 
     /**********************************************************************
     * decode
@@ -45,6 +44,8 @@ function BgReceiver() {
     function decode(message) {
         switch (message.action) {
             case 'block':
+                cycleTracker.toggle();
+
                 if (!browser.webRequest.onBeforeRequest.hasListener(redirect)) {
                     // Get the stored block patterns and work session length and start blocking
                     browser.storage.local.get(["blockPattern", "workLength"]).then( (item) => {
@@ -61,7 +62,6 @@ function BgReceiver() {
                 break;
         
             case 'requestCurTimeRemaining':
-                console.log(typeof(myCountdown));
                 if (myCountdown == null) {
                     sendMenuMsg(null);
                 } 
@@ -91,7 +91,6 @@ function BgReceiver() {
             {urls: pattern}, 
             ["blocking"]
         );
-        onBreak = false;
     }
 
     /**********************************************************************
@@ -111,26 +110,41 @@ function BgReceiver() {
     ***********************************************************************/
     function unblockPages() {
         browser.webRequest.onBeforeRequest.removeListener(redirect);
-        onBreak = true;
     }
 
     /**********************************************************************
-    * 
-    * Description: 
-    * Parameters: 
-    * Returns: 
+    * endOfTimer 
+    * Description: This function is provided to the Countdown Timer to be 
+    *               run at the conclusion of the countdown. It figures out
+    *               what the next Pomodoro cycle needs to be and starts
+    *               a new countdown.
+    * Parameters: None 
+    * Returns: None 
     ***********************************************************************/
     function endOfTimer() {
         // check if on break, if not, start break timer and flip onBreak
-        if (!onBreak) {
-            onBreak = true;
-            browser.storage.local.get("restLength").then( (item) => {
-                myCountdown = createTimer(item.restLength || restLengthDefault); 
-                myCountdown.start();
-            },onError);
+        if (cycleTracker.isWorking()) {
+            // switching to break cycle
+            cycleTracker.toggle();
+            // if long break, get long break minutes            
+            if (cycleTracker.isLongBreak()) {
+                console.log('long break reached');
+                browser.storage.local.get("longRestLength").then( (item) => {
+                    unblockPages();
+                    myCountdown = createTimer(item.longRestLength || longRestLengthDefault); 
+                    myCountdown.start();
+                },onError);
+ 
+            } else {
+                browser.storage.local.get("restLength").then( (item) => {
+                    unblockPages();
+                    myCountdown = createTimer(item.restLength || restLengthDefault); 
+                    myCountdown.start();
+                },onError);
+            }
         } else {
-            // if on break, flip flag to work and start blocking
-            onBreak = false;
+            // switching to working cycle
+            cycleTracker.toggle();
             browser.storage.local.get(["blockPattern", "workLength"]).then( (item) => {
                 blockPages( item.blockPattern || patternDefault );
                 myCountdown = createTimer(item.workLength || workLengthDefault);
@@ -286,5 +300,121 @@ function CountdownTimer() {
     return publicAPI;
 }
 
+/**********************************************************************
+* CycleManager
+* Description: A module which tracks Pomodoro cycles and can return the
+*               current cycle. Handles logic for switching the cycles.
+***********************************************************************/
+function CycleManager() {
+    var working = false;
+    var cycleCount = 0;
+    var longBreakFlag = false;
+    var longBreakEvery = 4;
 
+    /**********************************************************************
+    * Public Interface
+    * Description: toggle: toggles between work/break cycles
+    *              reset:  resets cycleCount, effectively restarting the 
+    *                       pomodoro cycle
+    *              isWorking: returns true if cycle is a work cycle, false
+    *                           if break cycle
+    *              isLongBreak: returns true if break cycle should be a 
+    *                            long break
+    *              cycleNum: returns the current cycle number
+    ***********************************************************************/
+    var publicAPI = {
+        toggle: toggleCycle,
+        reset: resetCycle,
+        isWorking: getWorkCycle,
+        isLongBreak: getLongBreak,
+        cycleNum: getCycleNum
+    }
+
+
+    /**********************************************************************
+    * toggleCycle
+    * Description: Toggles 'working' variable depending on its' current
+    *               value. Also checks if we are on a long break each
+    *               break cycle.
+    * Parameters: None 
+    * Returns: None 
+    ***********************************************************************/
+    function toggleCycle() {
+        if (working) {
+            working = false;
+            checkLongBreak(longBreakEvery);
+        } else {
+            working = true;
+            incCycleCount();
+        }
+    }
+
+    /**********************************************************************
+    * checkLongBreak
+    * Description: Sets the longBreakFlag if on a long break cycle.
+    * Parameters: lbNum = a number representing how often to have a long break
+    *                      ex. checkLongBreak(4) means every 4th break is long 
+    * Returns: None 
+    ***********************************************************************/
+    function checkLongBreak(lbNum) {
+        if ((getCycleNum() % lbNum) == 0) {
+            longBreakFlag = true;
+        } else {
+            longBreakFlag = false;
+        }
+    }
+
+    /**********************************************************************
+    * incCycleCount
+    * Description: Increments cycleCount
+    * Parameters: None
+    * Returns: None
+    ***********************************************************************/
+    function incCycleCount() {
+        cycleCount++;
+    }
+
+    /**********************************************************************
+    * resetCycle
+    * Description: Resets cycle count back to 0, effectively restarting the
+    *               Pomodoro cycle.
+    * Parameters: None 
+    * Returns: None 
+    ***********************************************************************/
+    function resetCycle() {
+        cycleCount = 0;
+    }
+    
+    /**********************************************************************
+    * getCycleNum
+    * Description: Reports what cycle number we are on
+    * Parameters: None
+    * Returns: cycleCount member variable 
+    ***********************************************************************/
+    function getCycleNum() {
+        return cycleCount;
+    }
+
+    /**********************************************************************
+    * getWorkCycle
+    * Description: Returns true/false depending on the current cycle
+    * Parameters: None 
+    * Returns: True if current cycle is a work cycle, false if break cycle
+    ***********************************************************************/
+    function getWorkCycle() {
+        return working;
+    }
+
+    /**********************************************************************
+    * getLongBreak
+    * Description: Returns the status of the longBreakFlag member variable
+    * Parameters: None 
+    * Returns: True if long break, false if regular break 
+    ***********************************************************************/
+    function getLongBreak() {
+        return longBreakFlag;
+    } 
+
+    return publicAPI;
+}
 
