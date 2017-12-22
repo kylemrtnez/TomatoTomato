@@ -1,5 +1,7 @@
 'use strict';
 
+import CycleManager from "cycleManager";
+
 const patternDefault = ["*://www.reddit.com/*", "*://www.facebook.com/*"];
 const workLengthDefault = 25;
 var restLengthDefault = 5;
