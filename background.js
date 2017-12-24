@@ -1,9 +1,11 @@
 'use strict';
 
+const SECONDS = 1000;
+const MINUTES = 60*SECONDS;
 const patternDefault = ["*://www.reddit.com/*", "*://www.facebook.com/*"];
-const workLengthDefault = 25;
-var restLengthDefault = 5;
-var longRestLengthDefault = 25;
+const workLengthDefault = 25*MINUTES/SECONDS;
+var restLengthDefault = 5*MINUTES/SECONDS;
+var longRestLengthDefault = 25*MINUTES/SECONDS;
 
 var original = BgReceiver();
 // Listener for message from popup. 
@@ -17,11 +19,11 @@ function onError(error) {
 * sendMenuMsg
 * Description: Sends a message to the popup menu telling it
                 whether to listen/block web requests or not.
-* Parameters: minutes = number to display in popup menu
+* Parameters: seconds = sends time left to menu.js
 * Returns: None
 ***********************************************************************/
-function sendMenuMsg(minutes) {
-    browser.runtime.sendMessage({uMinutes: minutes});
+function sendMenuMsg(seconds) {
+    browser.runtime.sendMessage({timeLeft: seconds});
 }
 
 /**********************************************************************
@@ -66,7 +68,7 @@ function BgReceiver() {
                     sendMenuMsg(null);
                 } 
                 else {
-                    sendMenuMsg(myCountdown.getCdMins());
+                    sendMenuMsg(myCountdown.getTime());
                 }
                 break;
 
@@ -126,7 +128,7 @@ function BgReceiver() {
         if (cycleTracker.isWorking()) {
             // switching to break cycle
             cycleTracker.toggle();
-            // if long break, get long break minutes            
+            // if long break, get long break seconds            
             if (cycleTracker.isLongBreak()) {
                 console.log('long break reached');
                 browser.storage.local.get("longRestLength").then( (item) => {
@@ -163,7 +165,7 @@ function BgReceiver() {
     ***********************************************************************/
     function createTimer(length) {
         var theCountdown = CountdownTimer();
-        theCountdown.minutes(length);     
+        theCountdown.setTimer(length);     
         theCountdown.cdFunc(endOfTimer);
         theCountdown.dispFunc(sendMenuMsg);
 
@@ -181,7 +183,7 @@ function BgReceiver() {
 /**********************************************************************
 * CountdownTimer
 * Description: Module representing a timer which counts down. 
-* Interface: .minutes = sets minutes
+* Interface: .setTimer = sets timer length in seconds
 *            .start = starts countdown
 *            .cdFunc = assigns a function to be called when countdown
 *                       ends
@@ -191,31 +193,30 @@ function BgReceiver() {
 * Returns: Public interface to interact with CountdownTimer object 
 ***********************************************************************/
 function CountdownTimer() {
-    const MINUTES = 60000;
-    var countdownMins = null; // how many minutes to countdown from
+    var countdownLength = null; // length of timer in seconds
     var timeoutIds = [];   // stores timeoutIDs to be cancelled if paused
     var countdownFunc = null;
     var displayFunc = null;
     var intervalID = null;
 
     /**********************************************************************
-    * setMins
-    * Description: Sets minutes to be counted down from
-    * Parameters: mins = number of minutes to set
+    * setTimer
+    * Description: Sets length of timer
+    * Parameters: timeLength = length of time in seconds to set
     * Returns: None
     ***********************************************************************/
-    function setMins(mins) {
-        countdownMins = mins;
+    function setTimer(timeLength) {
+        countdownLength = timeLength;
     }
 
     /**********************************************************************
-    * getMins
-    * Description: Gets minutes on the countdown
+    * getTime
+    * Description: Gets time left on the countdown
     * Parameters: None
-    * Returns: countdownMins
+    * Returns: countdownLength (seconds)
     ***********************************************************************/
-    function getMins() {
-        return countdownMins;
+    function getTime() {
+        return countdownLength;
     }
     
 
@@ -248,30 +249,29 @@ function CountdownTimer() {
     * Returns: None
     ***********************************************************************/
     function startTimer() {
-        var locCountdownMins = countdownMins || 0;
-        var totalDelay = (locCountdownMins * 1000 + 1000);
+        var timeLeft = countdownLength || 0;
 
         // timer
         if (displayFunc != null) {
-            displayFunc(locCountdownMins);
+            displayFunc(timeLeft);
         }
         intervalID = window.setInterval(()=> {
-            locCountdownMins--;
+            timeLeft--;
 
-            setMins(locCountdownMins);
+            setTimer(timeLeft);
 
             if (displayFunc != null) {
-                displayFunc(locCountdownMins);
+                displayFunc(timeLeft);
             }
 
-            if (locCountdownMins == 0) {
+            if (timeLeft == 0) {
                 stopTimer();
 
                 if (countdownFunc != null) {
                     countdownFunc();
                 }   
             }
-        }, 1000);
+        }, 1*SECONDS);
     }
 
     /**********************************************************************
@@ -284,17 +284,17 @@ function CountdownTimer() {
         displayFunc(null);
         if (intervalID) {
             window.clearInterval(intervalID);
-            setMins(null);
+            setTimer(null);
         }
     }
 
     var publicAPI = {
-        minutes: setMins,
+        setTimer: setTimer,
         start: startTimer,
         stop: stopTimer,
         cdFunc: setCountdownFunc,
         dispFunc: setDisplayFunc,
-        getCdMins: getMins
+        getTime: getTime
     };
 
     return publicAPI;

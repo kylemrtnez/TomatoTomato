@@ -6,7 +6,7 @@ var settingsBtn = document.getElementById('settings');
 
 // message listener
 browser.runtime.onMessage.addListener(function (message) {
-    updateDisplay(message.uMinutes || 'tomato icon');
+    updateDisplay(message.timeLeft || 0);
 })
 
 // update minutes when menu is opened
@@ -44,8 +44,22 @@ function sendBackgroundMsg(blockOrUnblock) {
 * Parameters: updatedMins = integer to change display 
 * Returns: 
 ***********************************************************************/
-function updateDisplay(updatedMins) {
+function updateDisplay(timeLeft) {
     var timerDisplay = document.getElementById('timer-display');
-    timerDisplay.textContent = updatedMins;
+
+    var minsLeft = Math.floor(timeLeft / 60);
+    var secsLeft = Math.floor(timeLeft - minsLeft*60);
+
+    // Display time left in MM:SS
+    timerDisplay.textContent = leftPad(minsLeft,2) + ":" + leftPad(secsLeft,2);
+
+    // Pad minutes / seconds so that always show at least two digits
+    function leftPad(number, targetLength) {
+        var output = number + '';
+        while (output.length < targetLength) {
+            output = '0' + output;
+        }
+        return output;
+    }
 }
 
