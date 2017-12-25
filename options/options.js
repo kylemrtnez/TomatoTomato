@@ -5,7 +5,6 @@
 //TODO: Enforce integer for timer length
 
 
-
 // Get the document ids
 var workLengthInput   = document.querySelector("#workLength");
 var restLengthInput   = document.querySelector("#restLength");
@@ -15,10 +14,12 @@ var removeSiteBtn = document.getElementById('removeSite');
 var websiteSelect = document.getElementById('blockPatterns');
 var websiteInput  = document.getElementById('websiteInput');
 
+const SECONDS = 1000;
+const MINUTES = 60*SECONDS;
 // Set up defaults.
-var workLengthDefault = "25";
-var restLengthDefault = "5";
-var longRestLengthDefault = "25";
+var workLengthDefault = 25*MINUTES/SECONDS;
+var restLengthDefault = 5*MINUTES/SECONDS;
+var longRestLengthDefault = 25*MINUTES/SECONDS;
 var blockPatternDefault = ["*://www.reddit.com/*", "*://www.facebook.com/*"];
 
 // Restore settings to UI when document elements done loading.
@@ -60,9 +61,9 @@ function saveOptions(event) {
 
     //Save the settings in local storage
     browser.storage.local.set({
-        workLength: workLengthInput.value,
-        restLength: restLengthInput.value,
-        longRestLength: longRestLengthInput.value,
+        workLength: workLengthInput.value*MINUTES/SECONDS,
+        restLength: restLengthInput.value*MINUTES/SECONDS,
+        longRestLength: longRestLengthInput.value*MINUTES/SECONDS,
         blockPattern: Array.apply(null, websiteSelect.options).map(function(el) { return el.text; }) // this crap is needed because HTMLSelectElement.Option returns stupid stuff
     });
 }
@@ -82,9 +83,9 @@ function restoreOptions() {
     // Actually does the restoring
     function updateUI(restoredSettings) {
         // Update the timer value 
-        workLengthInput.value   = restoredSettings.workLength         || workLengthDefault;
-        restLengthInput.value   = restoredSettings.restLength         || restLengthDefault;
-        longRestLengthInput.value   = restoredSettings.longRestLength || longRestLengthDefault;
+        workLengthInput.value       = restoredSettings.workLength*SECONDS/MINUTES     || workLengthDefault*SECONDS/MINUTES;
+        restLengthInput.value       = restoredSettings.restLength*SECONDS/MINUTES     || restLengthDefault*SECONDS/MINUTES;
+        longRestLengthInput.value   = restoredSettings.longRestLength*SECONDS/MINUTES || longRestLengthDefault*SECONDS/MINUTES;
 
         // If stored settings for blocked websites are found, use those.
         if(restoredSettings.blockPattern) {
