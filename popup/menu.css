@@ -63,22 +63,18 @@ html, body {
     cursor: pointer;
 }
 
-.top {
-    background-color: #ffefbb;
-    color: #ffffff;
-    display: flex;
-    margin: 10px;
-    border-radius: 10px;
-    box-shadow: 0 10px 6px -6px #777;    
-
-}
-
+/* -- START/STOP BUTTONS -- */
 .button {
-    margin: 5% auto;
-    padding: 5px;
+    margin: 20px 65px;
+    padding: 25px;
     text-align: center;
     cursor: pointer;
-    background-color: #f3efc9
+    background-color: #ffffff;
+    border-radius: 10px;
+}
+
+#stop {
+    display: none;
 }
 
 .button:hover {
@@ -87,6 +83,15 @@ html, body {
 
 
 /* -- TOMATO TIMER DISPLAY -- */
+.top {
+    background-color: #ffefbb;
+    color: #ffffff;
+    display: flex;
+    margin: 10px;
+    border-radius: 10px;
+    /*box-shadow: 0 10px 6px -6px #777;*/
+}
+
 #tomato-container {
     display: flex;
     width: 90%;
