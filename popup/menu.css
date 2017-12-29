@@ -63,22 +63,24 @@ html, body {
     cursor: pointer;
 }
 
-/* -- START/STOP BUTTONS -- */
+ /* -- START/STOP BUTTONS -- */
 .button {
     margin: 20px 65px;
     padding: 25px;
     text-align: center;
     cursor: pointer;
-    background-color: #ffffff;
-    border-radius: 10px;
+    background-color: #3d92ca;
+    color: #ffffff;
+    border-radius: 5px;
 }
 
+ 
 #stop {
     display: none;
 }
 
 .button:hover {
-    background-color: #3fb666
+    background-color: #0061a1;
 }
 
 
