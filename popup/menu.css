@@ -156,7 +156,7 @@ html, body {
 }
 
 #timer-display::after {
-    content: "\A Mins left";
+    content: "\A Time left";
     font-size: 10px;
     white-space: pre;
 }
