@@ -55,10 +55,10 @@ html, body {
     overflow: hidden;
 }
 
-.hamburger {
+#settings {
     text-align: left;
-    margin: 0 10px;
-    font-size: 30px;
+    margin: 5px 10px;
+    font-size: 25px;
     color: #ff6347;
     cursor: pointer;
 }
