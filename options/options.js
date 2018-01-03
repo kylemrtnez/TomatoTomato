@@ -53,7 +53,7 @@ removeSiteBtn.addEventListener("click", ()=> {
     }
 });
 
-// Error checking for working minutes
+// Error checking for working cycle minutes
 workLengthInput.addEventListener("input", ()=> {
     if (isNaN(workLengthInput.value)) {
         var workLengthErrMsg = "Please enter a number."; 
@@ -62,6 +62,30 @@ workLengthInput.addEventListener("input", ()=> {
     } else { 
         clearErrFormat(workLengthInput);
         clearErrText('workErr');
+    }
+})
+
+// Error checking for rest cycle minutes
+restLengthInput.addEventListener("input", ()=> {
+    if (isNaN(restLengthInput.value)) {
+        var restLengthErrMsg = "Please enter a number."; 
+        formatForErr(restLengthInput);
+        displayInputErr('restErr', restLengthErrMsg);
+    } else { 
+        clearErrFormat(restLengthInput);
+        clearErrText('restErr');
+    }
+})
+
+// Error checking for long rest cycle minutes
+longRestLengthInput.addEventListener("input", ()=> {
+    if (isNaN(longRestLengthInput.value)) {
+        var longRestLengthErrMsg = "Please enter a number."; 
+        formatForErr(longRestLengthInput);
+        displayInputErr('longRestErr', longRestLengthErrMsg);
+    } else { 
+        clearErrFormat(longRestLengthInput);
+        clearErrText('longRestErr');
     }
 })
 
