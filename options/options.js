@@ -22,6 +22,10 @@ var restLengthDefault = 5*MINUTES/SECONDS;
 var longRestLengthDefault = 25*MINUTES/SECONDS;
 var blockPatternDefault = ["*://www.reddit.com/*", "*://www.facebook.com/*"];
 
+/**********************************************************************
+* EVENT LISTENERS
+***********************************************************************/
+
 // Restore settings to UI when document elements done loading.
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
@@ -48,6 +52,22 @@ removeSiteBtn.addEventListener("click", ()=> {
         websiteSelect.remove(elementsToRemove[idx]);
     }
 });
+
+// Error checking for working minutes
+workLengthInput.addEventListener("input", ()=> {
+    if (isNaN(workLengthInput.value)) {
+        var workLengthErrMsg = "Please enter a number."; 
+        formatForErr(workLengthInput);
+        displayInputErr('workErr', workLengthErrMsg);
+    } else { 
+        clearErrFormat(workLengthInput);
+        clearErrText('workErr');
+    }
+})
+
+/**********************************************************************
+* HELPER FUNCTIONS
+***********************************************************************/
 
 /**********************************************************************
 * Description: Saves the user settings to local storage
@@ -103,4 +123,55 @@ function restoreOptions() {
     // Grabs the settings, then tells it to update input field w that data
     var gettingStoredSettings = browser.storage.local.get();
     gettingStoredSettings.then(updateUI, onError);
+}
+
+/**********************************************************************
+* formatForErr
+* Description: Formats a specified DOM Element to have a red background
+*               and red border
+* Parameters: The DOM element to format
+* Returns: None
+***********************************************************************/
+function formatForErr(domElement) {
+    var errorColor = "#f59797";
+    var errorBorder = "solid red 1px";
+
+    domElement.style.backgroundColor = errorColor;
+    domElement.style.border = errorBorder;
+}
+
+/**********************************************************************
+* clearErrFormat
+* Description: Sets a DOM element's background color to white and
+*               border to none
+* Parameters: The DOM element to format
+* Returns: None
+***********************************************************************/
+function clearErrFormat(domElement) {
+    domElement.style.backgroundColor = 'white';
+    domElement.style.border = 'none';
+}
+
+/**********************************************************************
+* displayInputErr
+* Description: Display an error message by inserting text into a 
+*               specified DOM element
+* Parameters: The DOM element ID to insert the message, a string with the
+*               error message.
+* Returns: None 
+***********************************************************************/
+function displayInputErr(domId, errMsg) {
+    var errorElement = document.getElementById(domId);
+    errorElement.textContent = errMsg;
+}
+
+/**********************************************************************
+* clearErrText
+* Description: Clears text content of a specified DOM element
+* Parameters: The DOM element ID to be cleared 
+* Returns: None 
+***********************************************************************/
+function clearErrText(domId) {
+    var clearThisElement = document.getElementById(domId);
+    clearThisElement.textContent = " ";
 }
