@@ -6,33 +6,50 @@
     </head>
     <body>
         <form>
-            <label>Block Websites:</label><br>
-            <div>
-            <select id="blockPatterns" multiple="true">
-            </select>            
-            <button id="removeSite">Remove</button>
-            </br>
-            </div>
-            <div>
-            <label><button id="addSite">Add</button>
-            <input type="text" id="websiteInput"></label>
-            </div></br>
+            <section id="websiteList">
+                <h3>Block Websites:</h3>
+                <div>
+                    <select id="blockPatterns" multiple="true"></select>            
+                    <button id="removeSite">Remove Site</button>
+                    </br>
+                </div>
+                <div>
+                    <label><button id="addSite">Add Site</button></label>
+                    <input type="text" id="websiteInput">
+                </div>
+            </section>
+
             <!-- POMODORO TIMER INPUTS -->
-            <label>Work Length (in minutes): <input type="text" id="workLength"></label>
-            <span class="err" id="workErr"></span>
-            </br>
+            <h3>Cycle Length Settings:</h3>
+            <div class="cycleInput">
+                <label for="workLength">Work Length (in minutes): </label>
+                <span id="workDisplay"></span>
+                <br>
+                <input type="text" id="workLength"
+                       placeholder="Enter minutes here.">
+                <span class="err" id="workErr"></span>
+            </div>
 
-            <label>Rest Length (in minutes): <input type="text" id="restLength"></label>
-            <span class="err" id="restErr"></span>
-            </br>
+            <div class="cycleInput">
+                <label for="restLength">Rest Length (in minutes): </label>
+                <span id="restDisplay"></span>
+                <br>
+                <input type="text" id="restLength"
+                       placeholder="Enter minutes here.">                
+                <span class="err" id="restErr"></span>
+            </div>
+            
+            <div class="cycleInput">
+                <label for="longRestLength">Long Rest Length (in minutes): </label>
+                <span id="longRestDisplay"></span>
+                <br>
+                <input type="text" id="longRestLength"
+                       placeholder="Enter minutes here.">                
+                <span class="err" id="longRestErr"></span>
+            </div>
 
-            <label>Long Rest Length (in minutes): <input type="text" id="longRestLength"></label>
-            <span class="err" id="longRestErr"></span>
-            </br>
-
-            <button type="submit">Save</button>
+            <button type="submit">Save</button><span id="saveSuccess"></span>
         </form>
-
         <script src="options.js"></script>
     </body>
 </html>

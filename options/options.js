@@ -157,7 +157,7 @@ function restoreOptions() {
 * Returns: None
 ***********************************************************************/
 function formatForErr(domElement) {
-    var errorColor = "#f59797";
+    var errorColor = "#ffc1c1";
     var errorBorder = "solid red 1px";
 
     domElement.style.backgroundColor = errorColor;
