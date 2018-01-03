@@ -13,6 +13,9 @@ var addSiteBtn    = document.getElementById('addSite');
 var removeSiteBtn = document.getElementById('removeSite');
 var websiteSelect = document.getElementById('blockPatterns');
 var websiteInput  = document.getElementById('websiteInput');
+var workDisplay = document.getElementById('workDisplay');
+var restDisplay = document.getElementById('restDisplay');
+var longRestDisplay = document.getElementById('longRestDisplay');
 
 const SECONDS = 1000;
 const MINUTES = 60*SECONDS;
@@ -58,10 +61,10 @@ workLengthInput.addEventListener("input", ()=> {
     if (isNaN(workLengthInput.value)) {
         var workLengthErrMsg = "Please enter a number."; 
         formatForErr(workLengthInput);
-        displayInputErr('workErr', workLengthErrMsg);
+        updateText('workErr', workLengthErrMsg);
     } else { 
         clearErrFormat(workLengthInput);
-        clearErrText('workErr');
+        clearText('workErr');
     }
 })
 
@@ -70,10 +73,10 @@ restLengthInput.addEventListener("input", ()=> {
     if (isNaN(restLengthInput.value)) {
         var restLengthErrMsg = "Please enter a number."; 
         formatForErr(restLengthInput);
-        displayInputErr('restErr', restLengthErrMsg);
+        updateText('restErr', restLengthErrMsg);
     } else { 
         clearErrFormat(restLengthInput);
-        clearErrText('restErr');
+        clearText('restErr');
     }
 })
 
@@ -82,10 +85,10 @@ longRestLengthInput.addEventListener("input", ()=> {
     if (isNaN(longRestLengthInput.value)) {
         var longRestLengthErrMsg = "Please enter a number."; 
         formatForErr(longRestLengthInput);
-        displayInputErr('longRestErr', longRestLengthErrMsg);
+        updateText('longRestErr', longRestLengthErrMsg);
     } else { 
         clearErrFormat(longRestLengthInput);
-        clearErrText('longRestErr');
+        clearText('longRestErr');
     }
 })
 
@@ -172,21 +175,23 @@ function formatForErr(domElement) {
 * Returns: None
 ***********************************************************************/
 function clearErrFormat(domElement) {
+    var regularBorder = "solid #cecece 1px";
+
     domElement.style.backgroundColor = 'white';
-    domElement.style.border = 'none';
+    domElement.style.border = regularBorder;
 }
 
 /**********************************************************************
-* displayInputErr
+* updateText
 * Description: Display an error message by inserting text into a 
 *               specified DOM element
 * Parameters: The DOM element ID to insert the message, a string with the
 *               error message.
 * Returns: None 
 ***********************************************************************/
-function displayInputErr(domId, errMsg) {
-    var errorElement = document.getElementById(domId);
-    errorElement.textContent = errMsg;
+function updateText(domId, msg) {
+    var element = document.getElementById(domId);
+    element.textContent = msg;
 }
 
 /**********************************************************************
@@ -195,7 +200,7 @@ function displayInputErr(domId, errMsg) {
 * Parameters: The DOM element ID to be cleared 
 * Returns: None 
 ***********************************************************************/
-function clearErrText(domId) {
+function clearText(domId) {
     var clearThisElement = document.getElementById(domId);
-    clearThisElement.textContent = " ";
+    clearThisElement.textContent = "";
 }
