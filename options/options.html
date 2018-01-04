@@ -5,7 +5,7 @@
         <link rel="stylesheet" href="options.css">
     </head>
     <body>
-        <form>
+        <form id="websiteForm">
             <section id="websiteList">
                 <h3>Block Websites:</h3>
                 <div>
@@ -14,12 +14,13 @@
                     </br>
                 </div>
                 <div>
-                    <label><button id="addSite">Add Site</button></label>
-                    <input type="text" id="websiteInput">
+                    <label><button id="addSite" type="button">Site</button>
+                    <input type="text" id="websiteInput" placeholder="Enter site to add here."></label>
                 </div>
             </section>
-
+        </form>
             <!-- POMODORO TIMER INPUTS -->
+        <form id="cycleForm">
             <h3>Cycle Length Settings:</h3>
             <div class="cycleInput">
                 <label for="workLength">Work Length (in minutes): </label>
