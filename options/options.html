@@ -8,44 +8,47 @@
         <form id="websiteForm">
             <section id="websiteList">
                 <h3>Block Websites:</h3>
+                <p>To add a site: Type in the address below and click "Add Site".</p>
+                <p>To remove a site: Select it and click "Remove Site".</p>
                 <div>
                     <select id="blockPatterns" multiple="true"></select>            
-                    <button id="removeSite">Remove Site</button>
+                    <button id="removeSite" type="button">Remove Site</button>
                     </br>
                 </div>
                 <div>
-                    <label><button id="addSite" type="button">Site</button>
-                    <input type="text" id="websiteInput" placeholder="Enter site to add here."></label>
+                    <button id="addSite" type="button">Add Site</button>
+                    <input type="text" id="websiteInput" placeholder="Enter site to add here.">
                 </div>
             </section>
         </form>
             <!-- POMODORO TIMER INPUTS -->
         <form id="cycleForm">
             <h3>Cycle Length Settings:</h3>
+            <p>To change cycle lengths: Enter the number of minutes you'd like your break to be and click save.</p>
             <div class="cycleInput">
-                <label for="workLength">Work Length (in minutes): </label>
-                <span id="workDisplay"></span>
+                <label for="workLength" class="cycleLabel">Work Length (in minutes): </label>
+                <span class="minuteDisplay" id="workDisplay"></span>
                 <br>
                 <input type="text" id="workLength"
-                       placeholder="Enter minutes here.">
+                       placeholder="Enter new minutes here.">
                 <span class="err" id="workErr"></span>
             </div>
 
             <div class="cycleInput">
-                <label for="restLength">Rest Length (in minutes): </label>
-                <span id="restDisplay"></span>
+                <label for="restLength" class="cycleLabel">Rest Length (in minutes): </label>
+                <span class="minuteDisplay" id="restDisplay"></span>
                 <br>
                 <input type="text" id="restLength"
-                       placeholder="Enter minutes here.">                
+                       placeholder="Enter new minutes here.">                
                 <span class="err" id="restErr"></span>
             </div>
             
             <div class="cycleInput">
-                <label for="longRestLength">Long Rest Length (in minutes): </label>
-                <span id="longRestDisplay"></span>
+                <label for="longRestLength" class="cycleLabel">Long Rest Length (in minutes): </label>
+                <span class="minuteDisplay" id="longRestDisplay"></span>
                 <br>
                 <input type="text" id="longRestLength"
-                       placeholder="Enter minutes here.">                
+                       placeholder="Enter new minutes here.">                
                 <span class="err" id="longRestErr"></span>
             </div>
 

@@ -7,9 +7,20 @@
 
 select, input {
     border: 1px solid #cecece;
-    margin: 5px;
+    margin: 7px;
+}
+
+
+
+.cycleLabel {
+    font-size: 15px;
 }
 
 .cycleInput {
     margin: 10px;
+}
+
+.minuteDisplay {
+    font-size: 20px;
+    margin: 5px;
 }

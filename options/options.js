@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", restoreOptions);
 document.getElementById("cycleForm").addEventListener("submit", saveMinutes);
 
 // Sets up listener that adds a website to the blocking list on click
-addSiteBtn.addEventListener("click", ()=> {
+addSiteBtn.addEventListener("click", (event)=> {
     var siteToAdd = websiteInput.value;
     var last = websiteSelect.options.length;
 
@@ -44,16 +44,18 @@ addSiteBtn.addEventListener("click", ()=> {
 
     websiteSelect.options[last] = new Option(siteToAdd,last);
     websiteInput.value = null;
+    saveWebsites(event);
 });
 
 // Sets up a listener that removes selected websites from the list.
-removeSiteBtn.addEventListener("click", ()=> {
+removeSiteBtn.addEventListener("click", (event)=> {
     var elementsToRemove = Array.apply(null, websiteSelect.selectedOptions).map(function(el) { return el.index; });
     //console.log(elementsToRemove);
     for(var idx = elementsToRemove.length-1; idx >=0 ; idx--){
         //console.log(elementsToRemove[idx]);
         websiteSelect.remove(elementsToRemove[idx]);
     }
+    saveWebsites(event);
 });
 
 // Error checking for working cycle minutes
