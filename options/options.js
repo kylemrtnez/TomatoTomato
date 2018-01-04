@@ -125,6 +125,15 @@ function saveMinutes(event) {
             longRestLength: longRestLengthInput.value*MINUTES/SECONDS,
         });
     }
+
+    
+    var gettingStoredSettings = browser.storage.local.get();
+    gettingStoredSettings.then((restoredSettings)=> {
+        workDisplay.textContent       = restoredSettings.workLength*SECONDS/MINUTES     || workLengthDefault*SECONDS/MINUTES;
+        restDisplay.textContent       = restoredSettings.restLength*SECONDS/MINUTES     || restLengthDefault*SECONDS/MINUTES;
+        longRestDisplay.textContent   = restoredSettings.longRestLength*SECONDS/MINUTES || longRestLengthDefault*SECONDS/MINUTES;
+    });
+
 }
 
 /**********************************************************************
