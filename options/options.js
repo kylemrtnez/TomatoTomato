@@ -32,8 +32,8 @@ var blockPatternDefault = ["*://www.reddit.com/*", "*://www.facebook.com/*"];
 // Restore settings to UI when document elements done loading.
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
-// Sets up listener for options save button.
-document.querySelector("form").addEventListener("submit", saveOptions);
+// Sets up listener for Cycle Length form save button.
+document.getElementById("cycleForm").addEventListener("submit", saveMinutes);
 
 // Sets up listener that adds a website to the blocking list on click
 addSiteBtn.addEventListener("click", ()=> {
@@ -97,22 +97,48 @@ longRestLengthInput.addEventListener("input", ()=> {
 ***********************************************************************/
 
 /**********************************************************************
+* saveMinutes
 * Description: Saves the user settings to local storage
 * Parameters: None 
 * Returns: None 
 ***********************************************************************/
-function saveOptions(event) {
+function saveMinutes(event) {
     event.preventDefault(); 
     
-    //console.log(Array.apply(null, websiteSelect.options).map(function(el) { return el.text; }));
-
     //Save the settings in local storage
+    if (workLengthInput.value != "") {
+        browser.storage.local.set({
+            workLength: workLengthInput.value*MINUTES/SECONDS,
+        });
+    }
+
+    if (restLengthInput.value != "") {
+        browser.storage.local.set({
+            restLength: restLengthInput.value*MINUTES/SECONDS,
+        });
+    }
+
+    if (longRestLengthInput.value != "") {
+        browser.storage.local.set({
+            longRestLength: longRestLengthInput.value*MINUTES/SECONDS,
+        });
+    }
+}
+
+/**********************************************************************
+* saveWebsites
+* Description: Event action for website list form submission. Stores 
+*               website list in local storage.
+* Parameters: The event from the event listener
+* Returns: None
+***********************************************************************/
+function saveWebsites(event) {
+    event.preventDefault();
+
     browser.storage.local.set({
-        workLength: workLengthInput.value*MINUTES/SECONDS,
-        restLength: restLengthInput.value*MINUTES/SECONDS,
-        longRestLength: longRestLengthInput.value*MINUTES/SECONDS,
-        blockPattern: Array.apply(null, websiteSelect.options).map(function(el) { return el.text; }) // this crap is needed because HTMLSelectElement.Option returns stupid stuff
-    });
+        blockPattern: Array.apply(null, websiteSelect.options).map(
+            function(el) { return el.text; }) // this crap is needed because HTMLSelectElement.Option returns stupid stuff
+    })
 }
 
 /**********************************************************************
@@ -130,9 +156,9 @@ function restoreOptions() {
     // Actually does the restoring
     function updateUI(restoredSettings) {
         // Update the timer value 
-        workLengthInput.value       = restoredSettings.workLength*SECONDS/MINUTES     || workLengthDefault*SECONDS/MINUTES;
-        restLengthInput.value       = restoredSettings.restLength*SECONDS/MINUTES     || restLengthDefault*SECONDS/MINUTES;
-        longRestLengthInput.value   = restoredSettings.longRestLength*SECONDS/MINUTES || longRestLengthDefault*SECONDS/MINUTES;
+        workDisplay.textContent       = restoredSettings.workLength*SECONDS/MINUTES     || workLengthDefault*SECONDS/MINUTES;
+        restDisplay.textContent       = restoredSettings.restLength*SECONDS/MINUTES     || restLengthDefault*SECONDS/MINUTES;
+        longRestDisplay.textContent   = restoredSettings.longRestLength*SECONDS/MINUTES || longRestLengthDefault*SECONDS/MINUTES;
 
         // If stored settings for blocked websites are found, use those.
         if(restoredSettings.blockPattern) {
