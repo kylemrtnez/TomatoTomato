@@ -55,36 +55,109 @@ html, body {
     overflow: hidden;
 }
 
-.top {
-    background-color: #44486e;
-    color: #ffffff;
-    display: flex;
-    margin: auto;
+#settings {
+    text-align: left;
+    margin: 5px 10px;
+    font-size: 25px;
+    color: #ff6347;
+    cursor: pointer;
 }
 
+ /* -- START/STOP BUTTONS -- */
 .button {
-    margin: 5% auto;
-    padding: 5px;
+    margin: 20px 65px;
+    padding: 25px;
     text-align: center;
     cursor: pointer;
-    background-color: #f3efc9
+    background-color: #3d92ca;
+    color: #ffffff;
+    border-radius: 5px;
+}
+
+ 
+#stop {
+    display: none;
 }
 
 .button:hover {
-    background-color: #3fb666
+    background-color: #0061a1;
+}
+
+
+/* -- TOMATO TIMER DISPLAY -- */
+.top {
+    background-color: #ffefbb;
+    color: #ffffff;
+    display: flex;
+    margin: 10px;
+    border-radius: 10px;
+    border:solid 1px #ffe692;
+    /*box-shadow: 0 10px 6px -6px #777;*/
+}
+
+#tomato-container {
+    display: flex;
+    width: 90%;
+    margin: 10px;
+    justify-content: center;
+}
+
+#tomato {
+    border-radius: 50%;
+    background: #ff6347;
+    height: 80px;
+    width: 95px;
+    box-shadow: 0 5px 5px 0 #777;
+}
+  
+#leaves {
+    background: rgb(159, 212, 89);
+    height:16px;
+    width:16px;
+    border-radius:16px 0 16px 0;
+    position: absolute;
+    transform: rotateZ(135deg);
+    top: 51px;
+    z-index: 1;
+    left: 113px;
+}
+  
+#leaves::before {
+  content: "";
+  background: rgb(159, 212, 89);
+    height:16px;
+  width:16px;
+  border-radius:16px 0 16px 0;
+  position: absolute;
+  transform: rotateZ(75deg);
+  top: 10px;
+  left: 0px;
+  z-index: 1;
+}
+
+#leaves::after {
+  content: "";
+  background: rgb(159, 212, 89); 
+    height:16px;
+  width:16px;
+  border-radius:16px 0 16px 0;
+  position: absolute;
+  transform: rotateZ(105deg);
+  bottom: 2px;
+  right: 12px;
+  z-index: 1;
 }
 
 #timer-display {
-    font-size: 25px;
+    font-size: 20px;
     text-align: center;
-    margin: 10% auto;
-    padding: 5px;
+    margin: auto;
+    padding: 28px 18px;
     cursor: default;
-    width: 100%;
 }
 
 #timer-display::after {
-    content: "\A Mins left";
+    content: "\A Time left";
     font-size: 10px;
     white-space: pre;
 }

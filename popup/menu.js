@@ -15,11 +15,15 @@ sendBackgroundMsg('requestCurTimeRemaining');
 // start button
 startBtn.addEventListener("click", ()=> {
     sendBackgroundMsg('block'); // TODO replace string with variable once alternating is solved
+    stopBtn.style.display = 'block';
+    startBtn.style.display = 'none';
 })
 
 // stop button
 stopBtn.addEventListener("click", ()=> {
     sendBackgroundMsg('unblock');
+    stopBtn.style.display = 'none';
+    startBtn.style.display = 'block';
 })
 
 // Open options extension options page when settings button is clicked
@@ -60,6 +64,15 @@ function updateDisplay(timeLeft) {
             output = '0' + output;
         }
         return output;
+    }
+
+    // Choose what button to display
+    if (minsLeft == 0 && secsLeft == 0) { 
+        stopBtn.style.display = 'none';
+        startBtn.style.display = 'block';
+    } else {
+        stopBtn.style.display = 'block';
+        startBtn.style.display = 'none';
     }
 }
 
