@@ -16,6 +16,7 @@ var websiteInput  = document.getElementById('websiteInput');
 var workDisplay = document.getElementById('workDisplay');
 var restDisplay = document.getElementById('restDisplay');
 var longRestDisplay = document.getElementById('longRestDisplay');
+var saveMinutesBtn = document.getElementById('saveMinutesBtn');
 
 const SECONDS = 1000;
 const MINUTES = 60*SECONDS;
@@ -33,7 +34,7 @@ var blockPatternDefault = ["*://www.reddit.com/*", "*://www.facebook.com/*"];
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
 // Sets up listener for Cycle Length form save button.
-document.getElementById("cycleForm").addEventListener("submit", saveMinutes);
+document.getElementById('cycleForm').addEventListener("submit", saveMinutes);
 
 // Sets up listener that adds a website to the blocking list on click
 addSiteBtn.addEventListener("click", (event)=> {
@@ -64,9 +65,11 @@ workLengthInput.addEventListener("input", ()=> {
         var workLengthErrMsg = "Please enter a number."; 
         formatForErr(workLengthInput);
         updateText('workErr', workLengthErrMsg);
+        saveMinutesBtn.disabled = true;
     } else { 
         clearErrFormat(workLengthInput);
         clearText('workErr');
+        saveMinutesBtn.disabled = false;
     }
 })
 
@@ -76,9 +79,11 @@ restLengthInput.addEventListener("input", ()=> {
         var restLengthErrMsg = "Please enter a number."; 
         formatForErr(restLengthInput);
         updateText('restErr', restLengthErrMsg);
+        saveMinutesBtn.disabled = true;
     } else { 
         clearErrFormat(restLengthInput);
         clearText('restErr');
+        saveMinutesBtn.disabled = false;
     }
 })
 
@@ -88,9 +93,11 @@ longRestLengthInput.addEventListener("input", ()=> {
         var longRestLengthErrMsg = "Please enter a number."; 
         formatForErr(longRestLengthInput);
         updateText('longRestErr', longRestLengthErrMsg);
+        saveMinutesBtn.disabled = true;
     } else { 
         clearErrFormat(longRestLengthInput);
         clearText('longRestErr');
+        saveMinutesBtn.disabled = false;
     }
 })
 
