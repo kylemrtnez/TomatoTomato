@@ -56,11 +56,16 @@ html, body {
 }
 
 #settings {
+    width: 15px;
     text-align: left;
     margin: 5px 10px;
     font-size: 25px;
-    color: #ff6347;
+    color: #3d92ca;
     cursor: pointer;
+}
+
+#settings:hover {
+    color: #0061a1;
 }
 
  /* -- START/STOP BUTTONS -- */

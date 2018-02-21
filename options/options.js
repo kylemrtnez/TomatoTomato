@@ -24,7 +24,7 @@ const MINUTES = 60*SECONDS;
 var workLengthDefault = 25*MINUTES/SECONDS;
 var restLengthDefault = 5*MINUTES/SECONDS;
 var longRestLengthDefault = 25*MINUTES/SECONDS;
-var blockPatternDefault = ["*://www.reddit.com/*", "*://www.facebook.com/*"];
+var blockPatternDefault = ["*://reddit.com/*", "*://facebook.com/*"];
 
 /**********************************************************************
 * EVENT LISTENERS
@@ -155,7 +155,10 @@ function saveWebsites(event) {
 
     browser.storage.local.set({
         blockPattern: Array.apply(null, websiteSelect.options).map(
-            function(el) { return el.text; }) // this crap is needed because HTMLSelectElement.Option returns stupid stuff
+            function(el) { 
+                var url = new WebsiteUrl(el.text); 
+                return url.formatted();
+            }) // this crap is needed because HTMLSelectElement.Option returns stupid stuff
     })
 }
 
@@ -187,7 +190,8 @@ function restoreOptions() {
 
         // Add the websites to the list box
         for(var idx in websiteList) {
-            websiteSelect.options[websiteSelect.options.length] = new Option(websiteList[idx],idx);
+            var listUrl = new WebsiteUrl(websiteList[idx]);
+            websiteSelect.options[websiteSelect.options.length] = new Option(listUrl.unformatted(), idx);
         }
     }
   
@@ -247,4 +251,130 @@ function updateText(domId, msg) {
 function clearText(domId) {
     var clearThisElement = document.getElementById(domId);
     clearThisElement.textContent = "";
+}
+
+/**********************************************************************
+* Class: WebsiteURL
+* Description: A class used to transform a website URL to formats needed
+*               by the web extension. 2 formats were needed, one for the
+*               background script and one to present to users on the 
+*               options page.
+*               Example of background script format: *://www.reddit.com/*
+*               Example of user presentation format: www.reddit.com
+* Interface: formatted() returns backround script format
+*            unformatted() returns user presentation format
+***********************************************************************/
+class WebsiteUrl {
+    constructor(urlAddress) {
+        this.unformattedUrl = this.unformatWebsite(urlAddress);
+        this.formattedUrl = this.formatWebsite(urlAddress);
+    }
+
+    unformatted() {
+        return this.unformattedUrl;
+    }
+
+    formatted() {
+        return this.formattedUrl;
+    }
+    
+    /**********************************************************************
+     * unformatWebsite
+     * Description: Formats website URL to format seen by users in options page.
+     *               Note that this function does not do formatting validation. 
+     *               URLs passed to this function should be in the format used 
+     *               by the background script before  being used. Formats to use 
+     *               can be found in the parameters 
+     *               section.
+     * Parameters: The website address to be formatted
+     *             The following formats are supported
+     *             *://www.reddit.com/*
+     * Returns: A URL with formatted for external use by options page.
+     *           Ex. www.reddit.com
+     ***********************************************************************/
+    unformatWebsite(formattedUrl) {
+        var unformattedUrl = unformatFront(formattedUrl);
+        unformattedUrl = unformatEnd(unformattedUrl);
+
+        return unformattedUrl;
+
+        function unformatFront(webUrl) {
+            var unformattedFront = webUrl;
+
+            if (unformattedFront.startsWith("*://")) {
+               unformattedFront = webUrl.slice(4);
+            }
+
+            return unformattedFront;
+        }
+
+        function unformatEnd(webUrl) {
+            var unformattedEnd = webUrl;
+
+            if (unformattedEnd.endsWith("/*")) {
+               unformattedEnd = webUrl.slice(0, -2); 
+            }
+
+            return unformattedEnd;
+        }
+
+    }
+ 
+    /**********************************************************************
+    * formatWebsite
+    * Description: Formats website URL to format used in background script. 
+    *               Note that this function does not do formatting validation. 
+    *               URLs passed to this function should be validated before 
+    *               being used. Formats to use can be found in the parameters 
+    *               section.
+    * Parameters: The website address to be formatted
+    *             The following formats are supported
+    *             www.reddit.com
+    *             http://www.reddit.com/
+    *             https://www.reddit.com/
+    * Returns: A URL with formatted for internal use by background script.
+    *           Ex. *://www.reddit.com/*
+    ***********************************************************************/
+    formatWebsite(unformattedUrl) {
+         
+        var formattedUrl = formatFront(unformattedUrl);
+        formattedUrl = formatEnd(formattedUrl);
+ 
+        return formattedUrl;
+ 
+        function formatEnd(webUrl) {
+            var endStr = "/*";
+            var formattedEnd;
+ 
+            if (webUrl.endsWith("/")) {
+                formattedEnd = webUrl.slice(0, -1) + endStr;
+            } else {
+                formattedEnd = webUrl + endStr;
+            }
+            return formattedEnd;
+        }
+        
+        function formatFront(webUrl) {
+            var beginningStr = "*://";
+            // check for the following strings at front of URL
+            var http = "http://";
+            var httpIdx = 7; // index for slicing
+            var https = "https://";
+            var httpsIdx = 8; // index for slicing
+            var formattedFront; // function returns this;
+ 
+            /* Note that formatting should be pre-validated before using this
+                function. Therefore, we don't need to validate formatting here
+                and can freely adjust the website URL.
+            */
+            if (webUrl.startsWith(http)) {
+                formattedFront =  beginningStr + webUrl.slice(httpIdx);
+            } else if (webUrl.startsWith(https)) {
+                formattedFront = beginningStr + webUrl.slice(httpsIdx);
+            } else {
+                formattedFront = beginningStr + webUrl;
+            }
+            return formattedFront;
+        } 
+    }
 }

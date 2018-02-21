@@ -10,7 +10,25 @@ select, input {
     margin: 7px;
 }
 
+h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
 
+h4 {
+    margin: 2px;
+}
+
+h5 {
+    margin: 0px;
+    font-size: 15px;
+    color: #ff6347;
+}
+
+p {
+    margin: 5px;
+    margin-bottom: 15px;
+}
 
 .cycleLabel {
     font-size: 15px;
@@ -23,4 +41,18 @@ select, input {
 .minuteDisplay {
     font-size: 20px;
     margin: 5px;
+}
+
+button {
+    border: 1px solid #004e83;
+    padding: 5px;
+    text-align: center;
+    cursor: pointer;
+    background-color: #3d92ca;
+    color: #ffffff;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #0061a1;
 }
