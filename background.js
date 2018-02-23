@@ -22,8 +22,14 @@ function onError(error) {
 * Parameters: seconds = sends time left to menu.js
 * Returns: None
 ***********************************************************************/
-function sendMenuMsg(seconds) {
-    browser.runtime.sendMessage({timeLeft: seconds});
+function sendMenuMsg(seconds, count, workingFlag) {
+    var contents = {
+        timeLeft: seconds,
+        cycCount: count,
+        cycWorking: workingFlag
+    };
+
+    browser.runtime.sendMessage(contents);
 }
 
 /**********************************************************************
@@ -60,15 +66,16 @@ function BgReceiver() {
 
             case 'unblock':
                 myCountdown.stop();
+                cycleTracker.reset();
                 unblockPages();
                 break;
         
-            case 'requestCurTimeRemaining':
+            case 'requestUpdate':
                 if (myCountdown == null) {
-                    sendMenuMsg(null);
+                    sendMenuMsg(null, cycleTracker.cycleNum(), cycleTracker.isWorking());
                 } 
                 else {
-                    sendMenuMsg(myCountdown.getTime());
+                    sendMenuMsg(myCountdown.getTime(), cycleTracker.cycleNum(), cycleTracker.isWorking());
                 }
                 break;
 
@@ -167,7 +174,9 @@ function BgReceiver() {
         var theCountdown = CountdownTimer();
         theCountdown.setTimer(length);     
         theCountdown.cdFunc(endOfTimer);
-        theCountdown.dispFunc(sendMenuMsg);
+        theCountdown.dispFunc(function(timeRemaining) {
+            sendMenuMsg(timeRemaining, cycleTracker.cycleNum(), cycleTracker.isWorking());
+        });
 
         return theCountdown;
     }
@@ -357,7 +366,7 @@ function CycleManager() {
     * Returns: None 
     ***********************************************************************/
     function checkLongBreak(lbNum) {
-        if ((getCycleNum() % lbNum) == 0) {
+        if ((cycleCount % lbNum) == 0) {
             longBreakFlag = true;
         } else {
             longBreakFlag = false;
@@ -383,6 +392,7 @@ function CycleManager() {
     ***********************************************************************/
     function resetCycle() {
         cycleCount = 0;
+        working = false;
     }
     
     /**********************************************************************
@@ -392,7 +402,17 @@ function CycleManager() {
     * Returns: cycleCount member variable 
     ***********************************************************************/
     function getCycleNum() {
-        return cycleCount;
+        var modifiedCount = cycleCount % 4;
+
+        if (cycleCount < 5) {
+            return cycleCount;
+        }
+        else if (modifiedCount == 0) {
+            return 4;
+        }
+        else {
+            return modifiedCount;
+        }
     }
 
     /**********************************************************************

@@ -7,10 +7,12 @@ var settingsBtn = document.getElementById('settings');
 // message listener
 browser.runtime.onMessage.addListener(function (message) {
     updateDisplay(message.timeLeft || 0);
+    updateBackground(message.cycWorking);
+    updateCycleCount(message.cycCount);
 })
 
 // update minutes when menu is opened
-sendBackgroundMsg('requestCurTimeRemaining');
+sendBackgroundMsg('requestUpdate');
 
 // start button
 startBtn.addEventListener("click", ()=> {
@@ -74,5 +76,25 @@ function updateDisplay(timeLeft) {
         stopBtn.style.display = 'block';
         startBtn.style.display = 'none';
     }
+}
+
+function updateBackground(working) {
+
+    var background = document.getElementById('background');
+    var restColor = '#c3e9ff';
+    var workColor = '#ffefbb';
+
+    if (working) {
+        background.style.backgroundColor = workColor;
+    }
+    else {
+        background.style.backgroundColor = restColor;
+    }
+
+}
+
+function updateCycleCount(count) {
+    var cycleHtml = document.getElementById('cycle-count');
+    cycleHtml.textContent = "Cycle: " + count;
 }
 
