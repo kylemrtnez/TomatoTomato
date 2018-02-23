@@ -1,9 +1,73 @@
 html, body {
     width: 100%;
+    background-color: #c3e9ff
 }
 
 div {
     margin: 5% auto;
     padding: 5px;
     text-align: center;
+}
+
+#tomato-container {
+    display: flex;
+    width: 90%;
+    margin: 10px;
+    justify-content: center;
+}
+
+#tomato {
+    border-radius: 50%;
+    background: #ff6347;
+    height: 480px;
+    width: 595px;
+    box-shadow: 0 5px 5px 0 #777;
+}
+  
+#leaves {
+    background: rgb(159, 212, 89);
+    height:86px;
+    width:86px;
+    border-radius:86px 0 86px 0;
+    position: absolute;
+    transform: rotateZ(135deg);
+    top: 290px;
+    z-index: 1;
+    left: 1110px;
+}
+  
+#leaves::before {
+  content: "";
+  background: rgb(159, 212, 89);
+  height:86px;
+  width:86px;
+  border-radius:86px 0 86px 0;
+  position: absolute;
+  transform: rotateZ(75deg);
+  top: 65px;
+  left: 8px;
+  z-index: 1;
+}
+
+#leaves::after {
+  content: "";
+  background: rgb(159, 212, 89); 
+    height:86px;
+  width:86px;
+  border-radius:86px 0 86px 0;
+  position: absolute;
+  transform: rotateZ(105deg);
+  bottom: 8px;
+  right: 65px;
+  z-index: 1;
+}
+
+#message {
+    font-size: 20px;
+    text-align: center;
+    line-height: 400px;
+    margin: auto;
+    padding: 28px 18px;
+    cursor: default;
+    color: white;
 }
