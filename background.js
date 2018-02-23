@@ -66,15 +66,16 @@ function BgReceiver() {
 
             case 'unblock':
                 myCountdown.stop();
+                cycleTracker.reset();
                 unblockPages();
                 break;
         
-            case 'requestCurTimeRemaining':
+            case 'requestUpdate':
                 if (myCountdown == null) {
-                    sendMenuMsg(null, cycleTracker.cycleNum, cycleTracker.isWorking);
+                    sendMenuMsg(null, cycleTracker.cycleNum(), cycleTracker.isWorking());
                 } 
                 else {
-                    sendMenuMsg(myCountdown.getTime(), cycleTracker.cycleNum, cycleTracker.isWorking);
+                    sendMenuMsg(myCountdown.getTime(), cycleTracker.cycleNum(), cycleTracker.isWorking());
                 }
                 break;
 
@@ -174,7 +175,7 @@ function BgReceiver() {
         theCountdown.setTimer(length);     
         theCountdown.cdFunc(endOfTimer);
         theCountdown.dispFunc(function(timeRemaining) {
-            sendMenuMsg(timeRemaining, cycleTracker.cycleNum, cycleTracker.isWorking);
+            sendMenuMsg(timeRemaining, cycleTracker.cycleNum(), cycleTracker.isWorking());
         });
 
         return theCountdown;
@@ -365,7 +366,7 @@ function CycleManager() {
     * Returns: None 
     ***********************************************************************/
     function checkLongBreak(lbNum) {
-        if ((getCycleNum() % lbNum) == 0) {
+        if ((cycleCount % lbNum) == 0) {
             longBreakFlag = true;
         } else {
             longBreakFlag = false;
@@ -391,6 +392,7 @@ function CycleManager() {
     ***********************************************************************/
     function resetCycle() {
         cycleCount = 0;
+        working = false;
     }
     
     /**********************************************************************
@@ -400,7 +402,17 @@ function CycleManager() {
     * Returns: cycleCount member variable 
     ***********************************************************************/
     function getCycleNum() {
-        return cycleCount;
+        var modifiedCount = cycleCount % 4;
+
+        if (cycleCount < 5) {
+            return cycleCount;
+        }
+        else if (modifiedCount == 0) {
+            return 4;
+        }
+        else {
+            return modifiedCount;
+        }
     }
 
     /**********************************************************************

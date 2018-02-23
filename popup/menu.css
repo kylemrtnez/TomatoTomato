@@ -96,7 +96,6 @@ html, body {
     display: flex;
     margin: 10px;
     border-radius: 10px;
-    border:solid 1px #ffe692;
     /*box-shadow: 0 10px 6px -6px #777;*/
 }
 
@@ -165,4 +164,10 @@ html, body {
     content: "\A Time left";
     font-size: 10px;
     white-space: pre;
+}
+
+
+#cycle-count {
+    font-size: 13px;
+    text-align: center;
 }
