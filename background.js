@@ -22,8 +22,14 @@ function onError(error) {
 * Parameters: seconds = sends time left to menu.js
 * Returns: None
 ***********************************************************************/
-function sendMenuMsg(seconds) {
-    browser.runtime.sendMessage({timeLeft: seconds});
+function sendMenuMsg(seconds, count, workingFlag) {
+    var contents = {
+        timeLeft: seconds,
+        cycCount: count,
+        cycWorking: workingFlag
+    };
+
+    browser.runtime.sendMessage(contents);
 }
 
 /**********************************************************************
@@ -65,10 +71,10 @@ function BgReceiver() {
         
             case 'requestCurTimeRemaining':
                 if (myCountdown == null) {
-                    sendMenuMsg(null);
+                    sendMenuMsg(null, cycleTracker.cycleNum, cycleTracker.isWorking);
                 } 
                 else {
-                    sendMenuMsg(myCountdown.getTime());
+                    sendMenuMsg(myCountdown.getTime(), cycleTracker.cycleNum, cycleTracker.isWorking);
                 }
                 break;
 
@@ -167,7 +173,9 @@ function BgReceiver() {
         var theCountdown = CountdownTimer();
         theCountdown.setTimer(length);     
         theCountdown.cdFunc(endOfTimer);
-        theCountdown.dispFunc(sendMenuMsg);
+        theCountdown.dispFunc(function(timeRemaining) {
+            sendMenuMsg(timeRemaining, cycleTracker.cycleNum, cycleTracker.isWorking);
+        });
 
         return theCountdown;
     }
