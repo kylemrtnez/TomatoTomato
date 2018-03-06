@@ -24,7 +24,7 @@ const MINUTES = 60*SECONDS;
 var workLengthDefault = 25*MINUTES/SECONDS;
 var restLengthDefault = 5*MINUTES/SECONDS;
 var longRestLengthDefault = 25*MINUTES/SECONDS;
-var blockPatternDefault = ["*://reddit.com/*", "*://facebook.com/*"];
+var blockPatternDefault = ["*://www.reddit.com/*", "*://www.facebook.com/*"];
 
 /**********************************************************************
 * EVENT LISTENERS
