@@ -9,11 +9,11 @@ div {
     text-align: center;
 }
 
+
 #tomato-container {
     display: flex;
-    width: 90%;
-    margin: 10px;
     justify-content: center;
+    margin-top: 200px;
 }
 
 #tomato {
@@ -22,6 +22,8 @@ div {
     height: 480px;
     width: 595px;
     box-shadow: 0 5px 5px 0 #777;
+    position: relative;
+    
 }
   
 #leaves {
@@ -31,9 +33,9 @@ div {
     border-radius:86px 0 86px 0;
     position: absolute;
     transform: rotateZ(135deg);
-    top: 290px;
+    top: 10px;
     z-index: 1;
-    left: 1110px;
+    left: 260px;
 }
   
 #leaves::before {
