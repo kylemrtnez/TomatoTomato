@@ -68,6 +68,7 @@ function BgReceiver() {
                 myCountdown.stop();
                 cycleTracker.reset();
                 unblockPages();
+                sendMenuMsg(null, cycleTracker.cycleNum(), cycleTracker.isWorking());
                 break;
         
             case 'requestUpdate':
