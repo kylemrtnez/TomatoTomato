@@ -2,10 +2,19 @@
 
 const SECONDS = 1000;
 const MINUTES = 60*SECONDS;
-const patternDefault = ["*://www.reddit.com/*", "*://www.facebook.com/*"];
-const workLengthDefault = 25*MINUTES/SECONDS;
-var restLengthDefault = 5*MINUTES/SECONDS;
-var longRestLengthDefault = 25*MINUTES/SECONDS;
+
+// Set up default options if necessary
+var checkingStoredSettings = browser.storage.local.get();
+checkingStoredSettings.then((loadedSettings)=> { 
+    if( loadedSettings.blockPattern == null ) {
+        browser.storage.local.set({
+            blockPattern:   {userValue: null, defaultValue: ["*://www.reddit.com/*", "*://www.facebook.com/*"]},
+            workLength:     {userValue: null, defaultValue: 25*MINUTES/SECONDS},
+            restLength:     {userValue: null, defaultValue: 5*MINUTES/SECONDS},
+            longRestLength: {userValue: null, defaultValue: 25*MINUTES/SECONDS},
+        });  
+    }
+});
 
 var original = BgReceiver();
 // Listener for message from popup. 
@@ -57,8 +66,8 @@ function BgReceiver() {
                 if (!browser.webRequest.onBeforeRequest.hasListener(redirect)) {
                     // Get the stored block patterns and work session length and start blocking
                     browser.storage.local.get(["blockPattern", "workLength"]).then( (item) => {
-                        blockPages( item.blockPattern || patternDefault );
-                        myCountdown = createTimer(item.workLength || workLengthDefault);
+                        blockPages( item.blockPattern.userValue || item.blockPattern.defaultValue );
+                        myCountdown = createTimer(item.workLength.userValue || item.workLength.defaultValue);
                         myCountdown.start();
                     },onError); // TODO: Stop timer if there's an error. Would the timer have started if we reach this error callback?
                 }
@@ -141,14 +150,14 @@ function BgReceiver() {
                 console.log('long break reached');
                 browser.storage.local.get("longRestLength").then( (item) => {
                     unblockPages();
-                    myCountdown = createTimer(item.longRestLength || longRestLengthDefault); 
+                    myCountdown = createTimer(item.longRestLength.userValue || item.longRestLength.defaultValue); 
                     myCountdown.start();
                 },onError);
  
             } else {
                 browser.storage.local.get("restLength").then( (item) => {
                     unblockPages();
-                    myCountdown = createTimer(item.restLength || restLengthDefault); 
+                    myCountdown = createTimer(item.restLength.userValue || item.restLength.defaultValue); 
                     myCountdown.start();
                 },onError);
             }
@@ -156,8 +165,8 @@ function BgReceiver() {
             // switching to working cycle
             cycleTracker.toggle();
             browser.storage.local.get(["blockPattern", "workLength"]).then( (item) => {
-                blockPages( item.blockPattern || patternDefault );
-                myCountdown = createTimer(item.workLength || workLengthDefault);
+                blockPages( item.blockPattern.userValue || item.blockPattern.defaultValue );
+                myCountdown = createTimer(item.workLength.userValue || item.workLength.defaultValue);
                 myCountdown.start();
             },onError);
         }
