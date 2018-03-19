@@ -4,27 +4,21 @@
 //TODO: Add Whitelist options and switch for blacklist/whitelist
 //TODO: Enforce integer for timer length
 
-
 // Get the document ids
-var workLengthInput   = document.querySelector("#workLength");
-var restLengthInput   = document.querySelector("#restLength");
+var workLengthInput     = document.querySelector("#workLength");
+var restLengthInput     = document.querySelector("#restLength");
 var longRestLengthInput = document.querySelector("#longRestLength");
-var addSiteBtn    = document.getElementById('addSite');
-var removeSiteBtn = document.getElementById('removeSite');
-var websiteSelect = document.getElementById('blockPatterns');
-var websiteInput  = document.getElementById('websiteInput');
-var workDisplay = document.getElementById('workDisplay');
-var restDisplay = document.getElementById('restDisplay');
-var longRestDisplay = document.getElementById('longRestDisplay');
-var saveMinutesBtn = document.getElementById('saveMinutesBtn');
+var addSiteBtn          = document.getElementById('addSite');
+var removeSiteBtn       = document.getElementById('removeSite');
+var websiteSelect       = document.getElementById('blockPatterns');
+var websiteInput        = document.getElementById('websiteInput');
+var workDisplay         = document.getElementById('workDisplay');
+var restDisplay         = document.getElementById('restDisplay');
+var longRestDisplay     = document.getElementById('longRestDisplay');
+var saveMinutesBtn      = document.getElementById('saveMinutesBtn');
 
 const SECONDS = 1000;
 const MINUTES = 60*SECONDS;
-// Set up defaults.
-var workLengthDefault = 25*MINUTES/SECONDS;
-var restLengthDefault = 5*MINUTES/SECONDS;
-var longRestLengthDefault = 25*MINUTES/SECONDS;
-var blockPatternDefault = ["*://www.reddit.com/*", "*://www.facebook.com/*"];
 
 /**********************************************************************
 * EVENT LISTENERS
@@ -114,31 +108,31 @@ longRestLengthInput.addEventListener("input", ()=> {
 function saveMinutes(event) {
     event.preventDefault(); 
     
-    //Save the settings in local storage
-    if (workLengthInput.value != "") {
-        browser.storage.local.set({
-            workLength: workLengthInput.value*MINUTES/SECONDS,
-        });
-    }
-
-    if (restLengthInput.value != "") {
-        browser.storage.local.set({
-            restLength: restLengthInput.value*MINUTES/SECONDS,
-        });
-    }
-
-    if (longRestLengthInput.value != "") {
-        browser.storage.local.set({
-            longRestLength: longRestLengthInput.value*MINUTES/SECONDS,
-        });
-    }
 
     
     var gettingStoredSettings = browser.storage.local.get();
     gettingStoredSettings.then((restoredSettings)=> {
-        workDisplay.textContent       = restoredSettings.workLength*SECONDS/MINUTES     || workLengthDefault*SECONDS/MINUTES;
-        restDisplay.textContent       = restoredSettings.restLength*SECONDS/MINUTES     || restLengthDefault*SECONDS/MINUTES;
-        longRestDisplay.textContent   = restoredSettings.longRestLength*SECONDS/MINUTES || longRestLengthDefault*SECONDS/MINUTES;
+
+        // Overwrite the user settings with the new settings
+        if (workLengthInput.value != "") {
+            restoredSettings.workLength.userValue = workLengthInput.value*MINUTES/SECONDS;
+        }
+
+        if (restLengthInput.value != "") {
+            restoredSettings.restLength.userValue = restLengthInput.value*MINUTES/SECONDS;
+        }
+
+        if (longRestLengthInput.value != "") {
+            restoredSettings.longRestLength.userValue = longRestLengthInput.value*MINUTES/SECONDS;
+        }
+        
+        // Save updated settings to local storage
+        browser.storage.local.set(restoredSettings);
+
+        // Update displays 
+        workDisplay.textContent       = restoredSettings.workLength.userValue*SECONDS/MINUTES     || restoredSettings.workLength.defaultValue*SECONDS/MINUTES;
+        restDisplay.textContent       = restoredSettings.restLength.userValue*SECONDS/MINUTES     || restoredSettings.restLength.defaultValue*SECONDS/MINUTES;
+        longRestDisplay.textContent   = restoredSettings.longRestLength.userValue*SECONDS/MINUTES || restoredSettings.longRestLength.defaultValue*SECONDS/MINUTES;
     });
 
 }
@@ -153,13 +147,18 @@ function saveMinutes(event) {
 function saveWebsites(event) {
     event.preventDefault();
 
-    browser.storage.local.set({
-        blockPattern: Array.apply(null, websiteSelect.options).map(
+    var gettingStoredWebsites = browser.storage.local.get();
+    gettingStoredWebsites.then((restoredSettings)=> {
+        // Overwrite block patterns with new list
+        restoredSettings.blockPattern.userValue = Array.apply(null, websiteSelect.options).map(
             function(el) { 
                 var url = new WebsiteUrl(el.text); 
                 return url.formatted();
             }) // this crap is needed because HTMLSelectElement.Option returns stupid stuff
-    })
+
+        // Save updated website list
+        browser.storage.local.set(restoredSettings);
+    });
 }
 
 /**********************************************************************
@@ -177,16 +176,11 @@ function restoreOptions() {
     // Actually does the restoring
     function updateUI(restoredSettings) {
         // Update the timer value 
-        workDisplay.textContent       = restoredSettings.workLength*SECONDS/MINUTES     || workLengthDefault*SECONDS/MINUTES;
-        restDisplay.textContent       = restoredSettings.restLength*SECONDS/MINUTES     || restLengthDefault*SECONDS/MINUTES;
-        longRestDisplay.textContent   = restoredSettings.longRestLength*SECONDS/MINUTES || longRestLengthDefault*SECONDS/MINUTES;
+        workDisplay.textContent       = restoredSettings.workLength.userValue*SECONDS/MINUTES     || restoredSettings.workLength.defaultValue*SECONDS/MINUTES;
+        restDisplay.textContent       = restoredSettings.restLength.userValue*SECONDS/MINUTES     || restoredSettings.restLength.defaultValue*SECONDS/MINUTES;
+        longRestDisplay.textContent   = restoredSettings.longRestLength.userValue*SECONDS/MINUTES || restoredSettings.longRestLength.defaultValue*SECONDS/MINUTES;
 
-        // If stored settings for blocked websites are found, use those.
-        if(restoredSettings.blockPattern) {
-            var websiteList = restoredSettings.blockPattern;
-        } else {
-            var websiteList = blockPatternDefault;
-        }
+        websiteList = restoredSettings.blockPattern.userValue || restoredSettings.blockPattern.defaultValue;
 
         // Add the websites to the list box
         for(var idx in websiteList) {
