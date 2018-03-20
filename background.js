@@ -9,9 +9,9 @@ checkingStoredSettings.then((loadedSettings)=> {
     if( loadedSettings.blockPattern == null ) {
         browser.storage.local.set({
             blockPattern:   {userValue: null, defaultValue: ["*://www.reddit.com/*", "*://www.facebook.com/*"]},
-            workLength:     {userValue: null, defaultValue: .25*MINUTES/SECONDS},
-            restLength:     {userValue: null, defaultValue: .125*MINUTES/SECONDS},
-            longRestLength: {userValue: null, defaultValue: 1*MINUTES/SECONDS},
+            workLength:     {userValue: null, defaultValue: 25*MINUTES/SECONDS},
+            restLength:     {userValue: null, defaultValue: 5*MINUTES/SECONDS},
+            longRestLength: {userValue: null, defaultValue: 25*MINUTES/SECONDS},
         });  
     }
 });
