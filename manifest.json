@@ -15,7 +15,8 @@
         "webRequest",
         "webRequestBlocking",
         "<all_urls>",
-        "storage"
+        "storage",
+        "notifications"
     ],
 
     "web_accessible_resources": [

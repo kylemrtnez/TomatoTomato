@@ -9,9 +9,9 @@ checkingStoredSettings.then((loadedSettings)=> {
     if( loadedSettings.blockPattern == null ) {
         browser.storage.local.set({
             blockPattern:   {userValue: null, defaultValue: ["*://www.reddit.com/*", "*://www.facebook.com/*"]},
-            workLength:     {userValue: null, defaultValue: 25*MINUTES/SECONDS},
-            restLength:     {userValue: null, defaultValue: 5*MINUTES/SECONDS},
-            longRestLength: {userValue: null, defaultValue: 25*MINUTES/SECONDS},
+            workLength:     {userValue: null, defaultValue: .25*MINUTES/SECONDS},
+            restLength:     {userValue: null, defaultValue: .125*MINUTES/SECONDS},
+            longRestLength: {userValue: null, defaultValue: 1*MINUTES/SECONDS},
         });  
     }
 });
@@ -24,6 +24,15 @@ function onError(error) {
     console.log(`Error: ${error}`);
 }
 
+function sendNotification(msg) {
+    console.log("sending notification")
+    browser.notifications.create("cycle-notification", {
+        "type": "basic",
+        "title": "Cycle complete!",
+        "iconUrl": browser.extension.getURL("icons/Tomato.svg"),
+        "message": msg
+    });
+}
 /**********************************************************************
 * sendMenuMsg
 * Description: Sends a message to the popup menu telling it
@@ -147,7 +156,8 @@ function BgReceiver() {
             cycleTracker.toggle();
             // if long break, get long break seconds            
             if (cycleTracker.isLongBreak()) {
-                console.log('long break reached');
+                var notificationMessage = "Congrats on the hard work! Take a long break.";
+
                 browser.storage.local.get("longRestLength").then( (item) => {
                     unblockPages();
                     myCountdown = createTimer(item.longRestLength.userValue || item.longRestLength.defaultValue); 
@@ -155,6 +165,8 @@ function BgReceiver() {
                 },onError);
  
             } else {
+                var notificationMessage = "Congrats on the hard work! Take a short break.";
+
                 browser.storage.local.get("restLength").then( (item) => {
                     unblockPages();
                     myCountdown = createTimer(item.restLength.userValue || item.restLength.defaultValue); 
@@ -162,14 +174,19 @@ function BgReceiver() {
                 },onError);
             }
         } else {
+            var notificationMessage = "Time to get to work!";
+
             // switching to working cycle
             cycleTracker.toggle();
+
             browser.storage.local.get(["blockPattern", "workLength"]).then( (item) => {
                 blockPages( item.blockPattern.userValue || item.blockPattern.defaultValue );
                 myCountdown = createTimer(item.workLength.userValue || item.workLength.defaultValue);
                 myCountdown.start();
             },onError);
         }
+
+        sendNotification(notificationMessage);
 
     }
     
