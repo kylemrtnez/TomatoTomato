@@ -25,12 +25,11 @@ function onError(error) {
 }
 
 function sendNotification(msg) {
-    console.log("sending notification")
     browser.notifications.create("cycle-notification", {
-        "type": "basic",
-        "title": "Cycle complete!",
-        "iconUrl": browser.extension.getURL("icons/Tomato.svg"),
-        "message": msg
+        "type":     "basic",
+        "title":    "Cycle complete!",
+        "iconUrl":  browser.extension.getURL("icons/Tomato.svg"),
+        "message":  msg
     });
 }
 /**********************************************************************
