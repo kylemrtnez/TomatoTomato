@@ -6,10 +6,22 @@ var settingsBtn = document.getElementById('settings');
 
 // message listener
 browser.runtime.onMessage.addListener(function (message) {
+    console.log('received msg. updating display')
     updateDisplay(message.timeLeft || 0);
     updateBackground(message.cycWorking);
     updateCycleCount(message.cycCount);
 })
+
+updatePopup();
+
+function updatePopup() {
+    console.log('update popup')
+    var intervalID = window.setInterval(()=> {
+        console.log('requesting update')
+        sendBackgroundMsg('requestUpdate')
+    },1000)
+    //sendBackgroundMsg('requestUpdate');
+}
 
 // update minutes when menu is opened
 sendBackgroundMsg('requestUpdate');
