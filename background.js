@@ -283,7 +283,7 @@ function CountdownTimer() {
                 displayFunc(timeLeft);
             }
 
-            if (timeLeft == 0) {
+            if (timeLeft <= 0) {
                 stopTimer();
 
                 if (countdownFunc != null) {
