@@ -10,6 +10,7 @@ var restLengthInput     = document.querySelector("#restLength");
 var longRestLengthInput = document.querySelector("#longRestLength");
 var addSiteBtn          = document.getElementById('addSite');
 var removeSiteBtn       = document.getElementById('removeSite');
+var restoreDefaultsBtn  = document.getElementById('restoreDefaultsBtn');
 var websiteSelect       = document.getElementById('blockPatterns');
 var websiteInput        = document.getElementById('websiteInput');
 var workDisplay         = document.getElementById('workDisplay');
@@ -40,6 +41,11 @@ addSiteBtn.addEventListener("click", (event)=> {
     websiteSelect.options[last] = new Option(siteToAdd,last);
     websiteInput.value = null;
     saveWebsites(event);
+});
+
+// Sets up listener for restore defaults button
+restoreDefaultsBtn.addEventListener("click", (event)=> {
+    restoreDefaults();
 });
 
 // Sets up a listener that removes selected websites from the list.
@@ -98,6 +104,28 @@ longRestLengthInput.addEventListener("input", ()=> {
 /**********************************************************************
 * HELPER FUNCTIONS
 ***********************************************************************/
+
+/**********************************************************************
+* restoreDefaults
+* Description: Restores the default settings
+* Parameters: None 
+* Returns: None 
+***********************************************************************/
+function restoreDefaults(event) {
+    console.log("restore defaults");
+    //For each data member, set userValue to null
+    var gettingStoredSettings = browser.storage.local.get();
+    gettingStoredSettings.then((userSettings)=> {
+        userSettings.workLength.userValue       = null;
+        userSettings.restLength.userValue       = null;
+        userSettings.longRestLength.userValue   = null;
+        userSettings.blockPattern.userValue     = null;
+
+        // Update the page
+        restoreOptions();
+    });
+}
+
 
 /**********************************************************************
 * saveMinutes
@@ -181,6 +209,12 @@ function restoreOptions() {
         longRestDisplay.textContent   = restoredSettings.longRestLength.userValue*SECONDS/MINUTES || restoredSettings.longRestLength.defaultValue*SECONDS/MINUTES;
 
         websiteList = restoredSettings.blockPattern.userValue || restoredSettings.blockPattern.defaultValue;
+
+        // Clear the website list before repopulating
+        var length = websiteSelect.options.length;
+        for (i = 0; i < length; i++) {
+            websiteSelect.options[i] = null;
+        }
 
         // Add the websites to the list box
         for(var idx in websiteList) {
