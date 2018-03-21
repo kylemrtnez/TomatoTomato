@@ -121,6 +121,9 @@ function restoreDefaults(event) {
         userSettings.longRestLength.userValue   = null;
         userSettings.blockPattern.userValue     = null;
 
+        // Save settings
+        browser.storage.local.set(userSettings);
+
         // Update the page
         restoreOptions();
     });
