@@ -74,15 +74,23 @@ function BgReceiver() {
                 if (!browser.webRequest.onBeforeRequest.hasListener(redirect)) {
                     // Get the stored block patterns and work session length and start blocking
                     browser.storage.local.get(["blockPattern", "workLength"]).then( (item) => {
+                        // Block the pages
                         blockPages( item.blockPattern.userValue || item.blockPattern.defaultValue );
+                        
+                        // Create a countdown timer and start it
                         myCountdown = createTimer(item.workLength.userValue || item.workLength.defaultValue);
                         myCountdown.start();
+
+                        // Inform menu immediately of changes
+                        sendMenuMsg(myCountdown.getTime(), cycleTracker.cycleNum(), cycleTracker.isWorking());
                     },onError); // TODO: Stop timer if there's an error. Would the timer have started if we reach this error callback?
                 }
                 break;
 
             case 'unblock':
+                // Stop the countdown, reset the cycle count, unblock the pages, and send an update to menu
                 myCountdown.stop();
+                myCountdown = null;
                 cycleTracker.reset();
                 unblockPages();
                 sendMenuMsg(null, cycleTracker.cycleNum(), cycleTracker.isWorking());
@@ -200,9 +208,6 @@ function BgReceiver() {
         var theCountdown = CountdownTimer();
         theCountdown.setTimer(length);     
         theCountdown.cdFunc(endOfTimer);
-        theCountdown.dispFunc(function(timeRemaining) {
-            sendMenuMsg(timeRemaining, cycleTracker.cycleNum(), cycleTracker.isWorking());
-        });
 
         return theCountdown;
     }
@@ -222,8 +227,6 @@ function BgReceiver() {
 *            .start = starts countdown
 *            .cdFunc = assigns a function to be called when countdown
 *                       ends
-*            .dispFunc = assigns a function to be called at each tick
-*                         of the countdown
 * Parameters: None 
 * Returns: Public interface to interact with CountdownTimer object 
 ***********************************************************************/
@@ -231,7 +234,6 @@ function CountdownTimer() {
     var countdownLength = null; // length of timer in seconds
     var timeoutIds = [];   // stores timeoutIDs to be cancelled if paused
     var countdownFunc = null;
-    var displayFunc = null;
     var intervalID = null;
 
     /**********************************************************************
@@ -267,17 +269,6 @@ function CountdownTimer() {
     }
 
     /**********************************************************************
-    * setDisplayFunc
-    * Description: Sets a function to be called with the intent of updating
-    *               a display as the countdown progresses
-    * Parameters: dFunc = the function provided to the timer 
-    * Returns: None 
-    ***********************************************************************/
-    function setDisplayFunc(dFunc) {
-        displayFunc = dFunc;
-    }
-    
-    /**********************************************************************
     * startTimer
     * Description: Starts timer countdown. 
     * Parameters: None
@@ -287,17 +278,10 @@ function CountdownTimer() {
         var timeLeft = countdownLength || 0;
 
         // timer
-        if (displayFunc != null) {
-            displayFunc(timeLeft);
-        }
         intervalID = window.setInterval(()=> {
             timeLeft--;
 
             setTimer(timeLeft);
-
-            if (displayFunc != null) {
-                displayFunc(timeLeft);
-            }
 
             if (timeLeft <= 0) {
                 stopTimer();
@@ -316,7 +300,6 @@ function CountdownTimer() {
     * Returns: None 
     ***********************************************************************/
     function stopTimer() {
-        displayFunc(null);
         if (intervalID) {
             window.clearInterval(intervalID);
             setTimer(null);
@@ -328,7 +311,6 @@ function CountdownTimer() {
         start: startTimer,
         stop: stopTimer,
         cdFunc: setCountdownFunc,
-        dispFunc: setDisplayFunc,
         getTime: getTime
     };
 

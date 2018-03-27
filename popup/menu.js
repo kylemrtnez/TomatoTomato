@@ -1,27 +1,28 @@
 'use strict';
 
-var startBtn = document.getElementById('start');
-var stopBtn = document.getElementById('stop');
-var settingsBtn = document.getElementById('settings');
+var startBtn        = document.getElementById('start');
+var stopBtn         = document.getElementById('stop');
+var settingsBtn     = document.getElementById('settings');
+var timerDisplay    = document.getElementById('timer-display');
 
-// message listener
+// Set up listener for updates from background
 browser.runtime.onMessage.addListener(function (message) {
     updateDisplay(message.timeLeft || 0);
     updateBackground(message.cycWorking);
     updateCycleCount(message.cycCount);
 })
 
-// update minutes when menu is opened
-sendBackgroundMsg('requestUpdate');
+// Start the popup update requests
+updatePopup();
 
-// start button
+// Start button listener
 startBtn.addEventListener("click", ()=> {
     sendBackgroundMsg('block'); // TODO replace string with variable once alternating is solved
     stopBtn.style.display = 'block';
     startBtn.style.display = 'none';
 })
 
-// stop button
+// Stop button listener
 stopBtn.addEventListener("click", ()=> {
     sendBackgroundMsg('unblock');
     stopBtn.style.display = 'none';
@@ -32,6 +33,21 @@ stopBtn.addEventListener("click", ()=> {
 settingsBtn.addEventListener("click", ()=> {
     var opening = browser.runtime.openOptionsPage();
 })
+
+
+/**********************************************************************
+* updatePopup
+* Description: Sets up an interval for requesting an update from background on
+*              the timer. 100ms seems to be roughly required to prevent
+*              user-detectable lag. TODO is this too much CPU usage?
+* Parameters: None
+* Returns: None
+***********************************************************************/
+function updatePopup() {
+    var intervalID = window.setInterval(()=> {
+        sendBackgroundMsg('requestUpdate');
+    },100)
+}
 
 /**********************************************************************
 * sendBackgroundMsg
@@ -48,11 +64,10 @@ function sendBackgroundMsg(blockOrUnblock) {
 * updateDisplay
 * Description: Updates timer display with minutes remaining in menu
 * Parameters: updatedMins = integer to change display 
-* Returns: 
+* Returns: None
 ***********************************************************************/
 function updateDisplay(timeLeft) {
-    var timerDisplay = document.getElementById('timer-display');
-
+    // Calculate mins/secs
     var minsLeft = Math.floor(timeLeft / 60);
     var secsLeft = Math.floor(timeLeft - minsLeft*60);
 
@@ -78,13 +93,19 @@ function updateDisplay(timeLeft) {
     }
 }
 
-function updateBackground(working) {
+/**********************************************************************
+* updateBackground
+* Description: Updates background color to correspond with cycle type
+* Parameters: isWorkCycle = boolean on if work status
+* Returns: None
+***********************************************************************/
+function updateBackground(isWorkCycle) {
 
     var background = document.getElementById('background');
     var restColor = '#c3e9ff';
     var workColor = '#ffefbb';
 
-    if (working) {
+    if (isWorkCycle) {
         background.style.backgroundColor = workColor;
     }
     else {
@@ -93,6 +114,12 @@ function updateBackground(working) {
 
 }
 
+/**********************************************************************
+* updateCycleCount
+* Description: Updates cycle count in menu to number of cycles
+* Parameters: count = int of number of cycles
+* Returns: None
+***********************************************************************/
 function updateCycleCount(count) {
     var cycleHtml = document.getElementById('cycle-count');
     cycleHtml.textContent = "Cycle: " + count;
