@@ -101,15 +101,19 @@ function updateDisplay(timeLeft) {
 ***********************************************************************/
 function updateBackground(isWorkCycle) {
 
-    var background = document.getElementById('background');
+    var backgrounds = document.getElementsByClassName('background');
     var restColor = '#c3e9ff';
     var workColor = '#ffefbb';
 
     if (isWorkCycle) {
-        background.style.backgroundColor = workColor;
+        for (var i = 0; i < backgrounds.length; i++) {
+            backgrounds[i].style.backgroundColor = workColor;
+        }
     }
     else {
-        background.style.backgroundColor = restColor;
+        for (var i = 0; i < backgrounds.length; i++) {
+            backgrounds[i].style.backgroundColor = restColor;
+        }
     }
 
 }
