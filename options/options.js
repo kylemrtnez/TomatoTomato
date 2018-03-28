@@ -45,7 +45,9 @@ addSiteBtn.addEventListener("click", (event)=> {
 
 // Sets up listener for restore defaults button
 restoreDefaultsBtn.addEventListener("click", (event)=> {
-    restoreDefaults();
+    if (window.confirm("Are you sure? This will erase all your settings.")) {
+        restoreDefaults();
+    }
 });
 
 // Sets up a listener that removes selected websites from the list.
@@ -214,9 +216,8 @@ function restoreOptions() {
         websiteList = restoredSettings.blockPattern.userValue || restoredSettings.blockPattern.defaultValue;
 
         // Clear the website list before repopulating
-        var length = websiteSelect.options.length;
-        for (i = 0; i < length; i++) {
-            websiteSelect.options[i] = null;
+        for (var idx = (websiteSelect.options.length - 1); idx >= 0; idx--) {
+            websiteSelect.remove(idx);
         }
 
         // Add the websites to the list box
