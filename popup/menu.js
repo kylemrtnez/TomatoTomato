@@ -9,7 +9,7 @@ var timerDisplay    = document.getElementById('timer-display');
 browser.runtime.onMessage.addListener(function (message) {
     updateDisplay(message.timeLeft || 0);
     updateBackground(message.cycWorking);
-    updateCycleCount(message.cycCount);
+    updateCycleCount(message.cycCount, message.cycWorking);
 })
 
 // Start the popup update requests
@@ -124,8 +124,24 @@ function updateBackground(isWorkCycle) {
 * Parameters: count = int of number of cycles
 * Returns: None
 ***********************************************************************/
-function updateCycleCount(count) {
-    var cycleHtml = document.getElementById('cycle-count');
-    cycleHtml.textContent = "Cycle: " + count;
+function updateCycle(count, workCycle) {
+    var cycleType = rest;
+    if (workCycle) {
+        cycleType = 'work';
+    }
+
+    var selectionString = 'cycle-' + cycleType + ' cycle-' + count;
+    console.log(selectionString);
+    var cycleHtml = document.getElementsByClassName(selectionString);
+
+
+    hiliteColor = '#FF932D';
+    finishedColor = '#0B61FF';
+
+
+    cycleHtml.style.border = '2px solid ' + hiliteColor;
+    
+
+
 }
 
