@@ -146,11 +146,13 @@ function updateCycle(count, workCycle) {
     
     function formatCurrent(domEle) {
         var hiliteColor = '#FF932D';
-        domEle.style.border = '2px solid ' + hiliteColor;
+        domEle.style.border = '1px solid transparent' + hiliteColor;
+        domEle.style.animation = 'glowing 2.0s infinite alternate';
     }
 
     function formatPrevious(num, cycle) {
-        var finishedColor = '#0B61FF';
+        var finishedBorder = '#0084DB';
+        var finishedColor = '#2594DD'
 
         var restClass = 'cycle-rest';
         var restCycles = document.getElementsByClassName(restClass);
@@ -159,11 +161,17 @@ function updateCycle(count, workCycle) {
 
         for (var i = 1; i < num; i++) {
             var idx = i - 1;
-            workCycles[idx].style.border = 'solid 2px ' + finishedColor;
-            restCycles[idx].style.border = 'solid 2px ' + finishedColor;
+            workCycles[idx].style.border = 'solid 1px ' + finishedBorder;
+            workCycles[idx].style.backgroundColor = finishedColor;
+            workCycles[idx].style.animation = 'none';
+            restCycles[idx].style.border = 'solid 1px ' + finishedBorder;
+            restCycles[idx].style.backgroundColor = finishedColor;
+            restCycles[idx].style.animation = 'none';
         }
         if (cycle == 'rest') {
-            workCycles[num - 1].style.border = 'solid 2px ' + finishedColor;
+            workCycles[num - 1].style.border = 'solid 1px ' + finishedBorder;
+            workCycles[num - 1].style.backgroundColor = finishedColor;
+            workCycles[num - 1].style.animation = 'none';
         }
  
     }
@@ -180,11 +188,13 @@ function updateCycle(count, workCycle) {
         for (var i = 0; i < restCycles.length; i++) {
             restCycles[i].style.border = 'none';
             restCycles[i].style.backgroundColor = noBackground; 
+            restCycles[i].style.animation = 'none';
         }
 
         for (var i = 0; i < workCycles.length; i++) {
             workCycles[i].style.border = 'none';
             workCycles[i].style.backgroundColor = noBackground; 
+            workCycles[i].style.animation = 'none';
         }
 
     }

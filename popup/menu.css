@@ -75,7 +75,7 @@ html, body {
 }
 
 #settings:hover {
-    color: #0061a1;
+    color: #2594dd;
 }
 
 #title {
@@ -229,6 +229,7 @@ html, body {
     border-bottom: 10px solid transparent;
     border-left: 10px solid #ffffff;
     margin: auto;
+    margin-left: 6px;
     border-radius: 3px;
 }
 
@@ -245,5 +246,11 @@ html, body {
 }
 
 .button:hover {
-    background-color: #0061a1;
+    background-color: #2594dd;
+}
+
+
+@keyframes glowing {
+    from { box-shadow: -0px -0px 3px #ffbc57, 0px 0px 3px #ffbc57; }
+    to { box-shadow:  -3px -3px 2px #ffbc57, 3px 3px 3px #ffbc57; }
 }
