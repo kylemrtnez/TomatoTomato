@@ -145,8 +145,11 @@ function updateCycle(count, workCycle) {
 
     
     function formatCurrent(domEle) {
-        var hiliteColor = '#FF932D';
-        domEle.style.border = '1px solid transparent' + hiliteColor;
+        var hiliteBorder = '#FF932D';
+        var hiliteColor = '#FFE8C4';
+
+        domEle.style.border = '1px solid transparent' + hiliteBorder;
+        domEle.style.backgroundColor = hiliteColor;
         domEle.style.animation = 'glowing 2.0s infinite alternate';
     }
 
