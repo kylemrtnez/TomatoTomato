@@ -56,6 +56,10 @@ html, body {
 
 }
 
+.background {
+    background-color: #c3e9ff;
+}
+
 #title-bar {
     display: flex;
     background-color: #ffffff;
@@ -129,7 +133,7 @@ html, body {
 
 /* -- TOMATO TIMER DISPLAY -- */
 .top {
-    background-color: #c3e9ff;
+
     color: #ffffff;
     display: flex;
     padding-top: 10px;
