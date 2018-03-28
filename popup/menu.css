@@ -50,7 +50,7 @@ table {
 /*-----------------------------------------------*/
 
 html, body {
-    width: 250px;
+    width: 300px;
     overflow: hidden;
 
 }
@@ -91,16 +91,16 @@ html, body {
     width: 100%;
     justify-content: center;
     background-color: #c3e9ff;
-    border-right: 1px solid #90D6FF;
-    border-left: 1px solid #90D6FF;
-    border-bottom: 1px solid #90D6FF;
+    border-right: 1px solid rgb(204, 204, 204);
+    border-left: 1px solid rgb(204, 204, 204);
+    border-bottom: 1px solid rgb(204, 204, 204);
 }
 
 
 .cycle-work {
     height: 12px;
     width: 15px;
-    margin: 5px 2px;
+    margin: 5px 4px;
     padding-top: 5px;
     text-align: center;
     border-radius: 50%;
@@ -110,7 +110,7 @@ html, body {
 .cycle-rest {
     height: 4px;
     width: 15px;
-    margin: 9px 2px 5px 2px;
+    margin: 9px 4px 5px 4px;
     padding-top: 5px;
     text-align: center;
     border-radius: 2px;
@@ -123,7 +123,7 @@ html, body {
 
 
 #cycle1 {
-    margin-left: 55px;
+    margin-left: 50px;
 }
 
 
@@ -134,8 +134,9 @@ html, body {
     color: #ffffff;
     display: flex;
     padding-top: 10px;
-    border-right: 1px solid #90D6FF;
-    border-left: 1px solid #90D6FF;
+    border-right: 1px solid rgb(204, 204, 204);
+    border-left: 1px solid  rgb(204, 204, 204);
+    box-shadow: 0 -2px 2px rgb(204, 204, 204);
 }
 
 #tomato-container {
@@ -148,7 +149,7 @@ html, body {
 #tomato {
     border-radius: 50%;
     background: #ff6347;
-    height: 150px;
+    height: 140px;
     width: 180px;
     padding: 10px;
     text-align: center;
@@ -166,7 +167,7 @@ html, body {
     transform: rotateZ(135deg);
     top: 58px;
     z-index: 1;
-    left: 103px;
+    left: 125px;
 }
   
 #leaves::before {
@@ -199,7 +200,7 @@ html, body {
     font-size: 35px;
     text-align: center;
     padding: 10px;
-    padding-top: 50px;
+    padding-top: 45px;
     cursor: default;
 }
 

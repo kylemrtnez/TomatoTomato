@@ -9,7 +9,7 @@ var timerDisplay    = document.getElementById('timer-display');
 browser.runtime.onMessage.addListener(function (message) {
     updateDisplay(message.timeLeft || 0);
     updateBackground(message.cycWorking);
-    updateCycleCount(message.cycCount, message.cycWorking);
+    updateCycle(message.cycCount, message.cycWorking);
 })
 
 // Start the popup update requests
@@ -125,23 +125,68 @@ function updateBackground(isWorkCycle) {
 * Returns: None
 ***********************************************************************/
 function updateCycle(count, workCycle) {
-    var cycleType = rest;
+    // if count is 0 then we haven't started a cycle
+    if (count == 0) {
+        resetCycle();
+        return;
+    } 
+
+    var cycleType = 'rest';
     if (workCycle) {
         cycleType = 'work';
     }
 
     var selectionString = 'cycle-' + cycleType + ' cycle-' + count;
-    console.log(selectionString);
-    var cycleHtml = document.getElementsByClassName(selectionString);
+    var curCycle = document.getElementsByClassName(selectionString);
+    resetCycle();
+    formatCurrent(curCycle[0]);
+    formatPrevious(count, cycleType);
 
 
-    hiliteColor = '#FF932D';
-    finishedColor = '#0B61FF';
-
-
-    cycleHtml.style.border = '2px solid ' + hiliteColor;
     
+    function formatCurrent(domEle) {
+        var hiliteColor = '#FF932D';
+        domEle.style.border = '2px solid ' + hiliteColor;
+    }
+
+    function formatPrevious(num, cycle) {
+        var finishedColor = '#0B61FF';
+
+        var restClass = 'cycle-rest';
+        var restCycles = document.getElementsByClassName(restClass);
+        var workClass = 'cycle-work';
+        var workCycles = document.getElementsByClassName(workClass);
+
+        for (var i = 1; i < num; i++) {
+            var idx = i - 1;
+            workCycles[idx].style.border = 'solid 2px ' + finishedColor;
+            restCycles[idx].style.border = 'solid 2px ' + finishedColor;
+        }
+        if (cycle == 'rest') {
+            workCycles[num - 1].style.border = 'solid 2px ' + finishedColor;
+        }
+ 
+    }
 
 
+    function resetCycle() {
+        var restClass = 'cycle-rest';
+        var restCycles = document.getElementsByClassName(restClass);
+        var workClass = 'cycle-work';
+        var workCycles = document.getElementsByClassName(workClass);
+
+        var noBackground = '#FFFFFF';
+
+        for (var i = 0; i < restCycles.length; i++) {
+            restCycles[i].style.border = 'none';
+            restCycles[i].style.backgroundColor = noBackground; 
+        }
+
+        for (var i = 0; i < workCycles.length; i++) {
+            workCycles[i].style.border = 'none';
+            workCycles[i].style.backgroundColor = noBackground; 
+        }
+
+    }
 }
 
