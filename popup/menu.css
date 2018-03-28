@@ -53,50 +53,89 @@ html, body {
     
     width: 250px;
     overflow: hidden;
+
+}
+
+#title-bar {
+    display: flex;
+    background-color: #ffffff;
+    border-bottom: 1px solid #90D6FF
 }
 
 #settings {
-    width: 15px;
-    text-align: left;
-    margin: 5px 10px;
+    text-align: center;
+    margin: 5px 5px;
     font-size: 25px;
-    color: #3d92ca;
+    color: #AAAAAA;
     cursor: pointer;
+
 }
 
 #settings:hover {
     color: #0061a1;
 }
 
- /* -- START/STOP BUTTONS -- */
-.button {
-    margin: 20px 65px;
-    padding: 25px;
+#title {
+    margin: 5px 5px;   
+    margin-right: auto;
+    font-size: 20px;
+
+}
+
+
+/* -- CYCLE TRACKER -- */
+#cycle-tracker {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    background-color: #c3e9ff;
+    border-right: 1px solid #90D6FF;
+    border-left: 1px solid #90D6FF;
+    border-bottom: 1px solid #90D6FF;
+}
+
+
+.cycle-work {
+    height: 12px;
+    width: 15px;
+    margin: 5px 2px;
+    padding-top: 5px;
     text-align: center;
-    cursor: pointer;
-    background-color: #3d92ca;
-    color: #ffffff;
-    border-radius: 5px;
+    border-radius: 50%;
+    background-color: #ffffff;
 }
 
- 
-#stop {
-    display: none;
+.cycle-rest {
+    height: 4px;
+    width: 15px;
+    margin: 9px 2px 5px 2px;
+    padding-top: 5px;
+    text-align: center;
+    border-radius: 2px;
+    background-color: #ffffff;
 }
 
-.button:hover {
-    background-color: #0061a1;
+.cycle-longrest {
+    width: 30px;
 }
+
+
+#cycle1 {
+    margin-left: 55px;
+}
+
+
 
 
 /* -- TOMATO TIMER DISPLAY -- */
 .top {
-    background-color: #ffefbb;
+    background-color: #c3e9ff;
     color: #ffffff;
     display: flex;
-    margin: 10px;
-    border-radius: 10px;
-    /*box-shadow: 0 10px 6px -6px #777;*/
+    padding-top: 10px;
+    border-right: 1px solid #90D6FF;
+    border-left: 1px solid #90D6FF;
+
 }
 
 #tomato-container {
@@ -109,65 +148,102 @@ html, body {
 #tomato {
     border-radius: 50%;
     background: #ff6347;
-    height: 80px;
-    width: 95px;
+    height: 150px;
+    width: 180px;
+    padding: 10px;
+    text-align: center;
     box-shadow: 0 5px 5px 0 #777;
+    display: flex;
+    flex-direction: column;
 }
   
 #leaves {
     background: rgb(159, 212, 89);
-    height:16px;
-    width:16px;
-    border-radius:16px 0 16px 0;
+    height:40px;
+    width:40px;
+    border-radius:40px 0 40px 0;
     position: absolute;
     transform: rotateZ(135deg);
-    top: 51px;
+    top: 58px;
     z-index: 1;
-    left: 113px;
+    left: 103px;
 }
   
 #leaves::before {
-  content: "";
-  background: rgb(159, 212, 89);
-    height:16px;
-  width:16px;
-  border-radius:16px 0 16px 0;
-  position: absolute;
-  transform: rotateZ(75deg);
-  top: 10px;
-  left: 0px;
-  z-index: 1;
+    content: "";
+    background: rgb(159, 212, 89);
+    height:40px;
+    width:40px;
+    border-radius:40px 0 40px 0;
+    position: absolute;
+    transform: rotateZ(75deg);
+    top: 25px;
+    left: 0px;
+    z-index: 1;
 }
 
 #leaves::after {
   content: "";
   background: rgb(159, 212, 89); 
-    height:16px;
-  width:16px;
-  border-radius:16px 0 16px 0;
+  height:40px;
+  width:40px;
+  border-radius:40px 0 40px 0;
   position: absolute;
   transform: rotateZ(105deg);
   bottom: 2px;
-  right: 12px;
+  right: 25px;
   z-index: 1;
 }
 
 #timer-display {
-    font-size: 20px;
+    font-size: 35px;
     text-align: center;
-    margin: auto;
-    padding: 28px 18px;
+    padding: 10px;
+    padding-top: 50px;
     cursor: default;
-}
 
-#timer-display::after {
-    content: "\A Time left";
-    font-size: 10px;
-    white-space: pre;
 }
-
 
 #cycle-count {
     font-size: 13px;
     text-align: center;
+}
+
+
+ /* -- START/STOP BUTTONS -- */
+.button {
+    margin: auto;
+    width: 20px;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: #ff6347;
+    color: #ffffff;
+    border: solid 4px #FFFFFF;
+}
+
+#play-icon {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid #ffffff;
+    margin: auto;
+    border-radius: 3px;
+}
+
+#stop-icon {
+    height: 20px;
+    width: 19px;
+    border-radius: 2px;
+    margin: auto;
+    background-color: #ffffff;
+}
+
+#stop {
+    display: none;
+}
+
+.button:hover {
+    background-color: #0061a1;
 }
