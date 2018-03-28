@@ -251,6 +251,6 @@ html, body {
 
 
 @keyframes glowing {
-    from { box-shadow: -0px -0px 3px #ffbc57, 0px 0px 3px #ffbc57; }
-    to { box-shadow:  -3px -3px 2px #ffbc57, 3px 3px 3px #ffbc57; }
+    from { box-shadow: -0px -0px 3px 1px #ffbc57, 0px 0px 3px 1px #ffbc57; }
+    to { box-shadow:  -3px -3px 2px 1px #ffbc57, 3px 3px 3px 1px #ffbc57; }
 }
