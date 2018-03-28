@@ -251,6 +251,10 @@ html, body {
 
 
 @keyframes glowing {
-    from { box-shadow: 0px 0px 3px 1px #ffdecc, 0px 0px 3px 1px #ffbc57; }
-    to { box-shadow:  -1px -1px 3px 1px #ffbc57, 1px 1px 3px 1px #ffdecc; }
+    0% { box-shadow: inset 0px 0px 5px 1px #ffbc57, 0px 0px 5px 1px #ffbc57;
+         background: rgba(255, 171, 70, 0.3);
+     }
+    100% { box-shadow:  inset 0px 0px 2px 1px #ffbc57, 0px 0px 10px 1px #ffbc57; 
+           background: rgba(255, 171, 70, 1);
+    }
 }

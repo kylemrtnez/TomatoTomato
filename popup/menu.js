@@ -144,13 +144,13 @@ function updateCycle(count, workCycle) {
 
 
     
-    function formatCurrent(domEle) {
+    function formatCurrent(domEle, ) {
         var hiliteBorder = '#FF932D';
         var hiliteColor = '#ffab46';
 
         domEle.style.border = '1px solid transparent' + hiliteBorder;
         domEle.style.backgroundColor = hiliteColor;
-        domEle.style.animation = 'glowing 2.0s infinite alternate';
+        domEle.style.animation = 'glowing 1.0s infinite alternate';
     }
 
     function formatPrevious(num, cycle) {
@@ -167,6 +167,7 @@ function updateCycle(count, workCycle) {
             workCycles[idx].style.border = 'solid 1px ' + finishedBorder;
             workCycles[idx].style.backgroundColor = finishedColor;
             workCycles[idx].style.animation = 'none';
+
             restCycles[idx].style.border = 'solid 1px ' + finishedBorder;
             restCycles[idx].style.backgroundColor = finishedColor;
             restCycles[idx].style.animation = 'none';
