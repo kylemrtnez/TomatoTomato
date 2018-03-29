@@ -192,9 +192,13 @@ function BgReceiver() {
                 myCountdown.start();
             },onError);
         }
-
-        sendNotification(notificationMessage);
-
+        browser.storage.local.get("popups")
+            .then( (item)=> {
+                console.log(item.popups);
+                if (item.popups) {
+                    sendNotification(notificationMessage);
+                }
+            }, onError);
     }
     
 

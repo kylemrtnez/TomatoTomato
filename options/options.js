@@ -16,6 +16,8 @@ var workDisplay         = document.getElementById('workDisplay');
 var restDisplay         = document.getElementById('restDisplay');
 var longRestDisplay     = document.getElementById('longRestDisplay');
 var saveMinutesBtn      = document.getElementById('saveMinutesBtn');
+var popupNotif          = document.getElementById('popupNotif');
+
 
 const SECONDS = 1000;
 const MINUTES = 60*SECONDS;
@@ -94,6 +96,15 @@ longRestLengthInput.addEventListener("input", ()=> {
         saveMinutesBtn.disabled = false;
     }
 })
+
+popupNotif.addEventListener("change", ()=> {
+    browser.storage.local.get()
+        .then((restoredSettings)=> {
+            restoredSettings.popups = popupNotif.checked;
+            browser.storage.local.set(restoredSettings);
+        })
+})
+
 
 /**********************************************************************
 * HELPER FUNCTIONS
@@ -174,7 +185,9 @@ function restoreOptions() {
     }
   
     // Actually does the restoring
-    function updateUI(restoredSettings) {
+    function updateUI(restoredSettings)  {
+        popupNotif.checked = restoredSettings.popups;
+
         // Update the timer value 
         workDisplay.textContent       = restoredSettings.workLength.userValue*SECONDS/MINUTES     || restoredSettings.workLength.defaultValue*SECONDS/MINUTES;
         restDisplay.textContent       = restoredSettings.restLength.userValue*SECONDS/MINUTES     || restoredSettings.restLength.defaultValue*SECONDS/MINUTES;
