@@ -52,8 +52,18 @@ table {
 html, body {
     width: 300px;
     overflow: hidden;
-
 }
+
+@font-face {
+    font-family: 'Josefin-Sans';
+    src: url('JosefinSans-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Gloria-Hallelujah';
+    src: url('GloriaHallelujah.ttf') format('truetype');
+}
+
 
 .background {
     background-color: #c3e9ff;
@@ -81,7 +91,12 @@ html, body {
 #title {
     margin: 5px 5px;   
     margin-right: auto;
+    font-family: 'Gloria-Hallelujah', Fallback, sans-serif;
     font-size: 20px;
+}
+
+.tomato-o {
+    color: #ff6347;
 }
 
 
@@ -202,6 +217,7 @@ html, body {
     padding: 10px;
     padding-top: 45px;
     cursor: default;
+    font-family: sans-serif;
 }
 
 #cycle-count {
@@ -252,9 +268,20 @@ html, body {
 
 @keyframes glowing {
     0% { box-shadow: inset 0px 0px 5px 1px #ffbc57, 0px 0px 5px 1px #ffbc57;
-         background: rgba(255, 171, 70, 0.3);
-     }
+         background: rgba(255, 171, 70, 0.4);
+    } 
     100% { box-shadow:  inset 0px 0px 2px 1px #ffbc57, 0px 0px 10px 1px #ffbc57; 
            background: rgba(255, 171, 70, 1);
+    }
+}
+
+@keyframes fillIn {
+    0% {
+        box-shadow: inset 0px 0px 3px 1px #2594dd;
+        background: rgba(37, 148, 221, 0);
+    }
+    100% {
+        box-shadow: inset 0px 0px 5px 1px #2594dd;
+        background: rgba(37, 148, 221, 1);
     }
 }

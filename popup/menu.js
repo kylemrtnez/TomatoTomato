@@ -166,16 +166,16 @@ function updateCycle(count, workCycle) {
             var idx = i - 1;
             workCycles[idx].style.border = 'solid 1px ' + finishedBorder;
             workCycles[idx].style.backgroundColor = finishedColor;
-            workCycles[idx].style.animation = 'none';
+            workCycles[idx].style.animation = 'fillIn 3.0s';
 
             restCycles[idx].style.border = 'solid 1px ' + finishedBorder;
             restCycles[idx].style.backgroundColor = finishedColor;
-            restCycles[idx].style.animation = 'none';
+            restCycles[idx].style.animation = 'fillIn 3.0s';
         }
         if (cycle == 'rest') {
             workCycles[num - 1].style.border = 'solid 1px ' + finishedBorder;
             workCycles[num - 1].style.backgroundColor = finishedColor;
-            workCycles[num - 1].style.animation = 'none';
+            workCycles[num - 1].style.animation = 'fillIn 3.0s';
         }
  
     }

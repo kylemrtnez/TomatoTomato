@@ -28,7 +28,7 @@ function sendNotification(msg) {
     browser.notifications.create("cycle-notification", {
         "type":     "basic",
         "title":    "Cycle complete!",
-        "iconUrl":  browser.extension.getURL("icons/Tomato.svg"),
+        "iconUrl":  browser.extension.getURL("icons/pomo48.png"),
         "message":  msg
     });
 }

@@ -5,6 +5,11 @@
     padding-bottom:20px;
 }
 
+#blockPatterns {
+    height: 270px;
+    width: 200px;
+}
+
 select, input {
     border: 1px solid #cecece;
     margin: 7px;
@@ -55,4 +60,8 @@ button {
 
 button:hover {
     background-color: #0061a1;
+}
+
+#removeSite {
+    vertical-align: top;
 }
