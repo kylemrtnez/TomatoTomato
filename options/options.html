@@ -8,21 +8,6 @@
     </head>
     <body>
         <div class="container">
-        <div class="col-lg-12">
-            <div class="panel panel-primary">
-                <div class="panel-heading"><h4>Notifications</h4></div>
-                <div class="panel-body">
-                    <form id="notifications">
-                        <div class="checkbox">
-                            <label for="popup">
-                            <input type="checkbox" id="popupNotif" name="popupNotif">
-                            Turn on pop-up notifications
-                            </label>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
             <div class="panel panel-primary" id="websiteList">
                 <div class="panel-heading"><h4>Block Websites</h4></div>
                 <div class="panel-body">
@@ -55,71 +40,65 @@
             <div class="panel panel-primary">
                 <div class="panel-heading"><h4>Cycle Length Settings</h4></div>
                 <div class="panel-body">
-                    <h5>To change cycle lengths:</h5>
-                    <p>Enter the number of minutes you'd like your break to be and click save.</p>
-                    <form id="workCycleForm">
-                    <div class="input-group">
-                        <span class="input-group-addon length-label" id="workLengthAddon"><em>Work Length:</em> <span class="minuteDisplay" id="workDisplay"></span> min</span>
-                        <input type="text" class="form-control" id="workLength" placeholder="Enter work cycle length..." aria-describedby="workLengthAddon">
-                        <span class="input-group-btn">
-                            <button class="btn btn-success" type="button">Save</button>
-                        </span>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>To change cycle lengths:</h5>
+                                <p>Enter the number of minutes you'd like your break to be and click save.</p>
+                            </div>
+                            <div class="col-md-6">
+                                <div id="cycleError" class="alert alert-danger" role="alert" hidden=true>
+                                    <strong>Oh snap!</strong> Please enter a positive number of minutes.    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form id="workCycleForm">
+                                    <div class="input-group">
+                                        <span class="input-group-addon length-label" id="workLengthAddon"><em>Work Length:</em> <span class="minuteDisplay" id="workDisplay"></span> min</span>
+                                        <input type="text" class="form-control" id="workLength" placeholder="Enter work cycle length..." aria-describedby="workLengthAddon">
+                                        <span class="input-group-btn"><button class="btn btn-success" id="workLengthBtn" type="button">Save</button>
+                                        </span>
+                                    </div>
+                                </form>
+                                <br>
+                                <form id="restCycleForm">
+                                    <div class="input-group">
+                                        <span class="input-group-addon length-label" id="restLengthAddon"><em>Rest Length:</em> <span class="minuteDisplay" id="restDisplay"></span> min</span>
+                                        <input type="text" class="form-control" id="restLength" placeholder="Enter rest cycle length..." aria-describedby="restLengthAddon">
+                                        <span class="input-group-btn"><button class="btn btn-success" id="restLengthBtn" type="button">Save</button>
+                                        </span>
+                                    </div>
+                                </form>
+                                <br>
+                                <form id="longRestCycleForm">
+                                    <div class="input-group">
+                                        <span class="input-group-addon length-label" id="longRestLengthAddon"><em>Long Rest Length:</em> <span class="minuteDisplay" id="longRestDisplay"></span> min</span>
+                                        <input type="text" class="form-control" id="longRestLength" placeholder="Enter long rest cycle length..." aria-describedby="longRestLengthAddon">
+                                        <span class="input-group-btn"><button class="btn btn-success" id="longRestLengthBtn" type="button">Save</button>
+                                        </span>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
+            </div>
+
+            <div class="panel panel-primary">
+                <div class="panel-heading"><h4>Notifications</h4></div>
+                <div class="panel-body">
+                    <form id="notifications">
+                        <div class="checkbox">
+                            <label for="popup">
+                            <input type="checkbox" id="popupNotif" name="popupNotif">
+                            Turn on pop-up notifications
+                            </label>
+                        </div>
                     </form>
-                    <br>
-                    <form id="restCycleForm">
-                    <div class="input-group">
-                        <span class="input-group-addon length-label" id="restLengthAddon"><em>Rest Length:</em> <span class="minuteDisplay" id="restDisplay"></span> min</span>
-                        <input type="text" class="form-control" id="restLength" placeholder="Enter rest cycle length..." aria-describedby="restLengthAddon">
-                        <span class="input-group-btn">
-                            <button class="btn btn-success" type="button">Save</button>
-                        </span>
-                    </div>
-                    </form>
-                    <br>
-                    <form id="longRestCycleForm">
-                    <div class="input-group">
-                        <span class="input-group-addon length-label" id="longRestLengthAddon"><em>Long Rest Length:</em> <span class="minuteDisplay" id="longRestDisplay"></span> min</span>
-                        <input type="text" class="form-control" id="longRestLength" placeholder="Enter long rest cycle length..." aria-describedby="longRestLengthAddon">
-                        <span class="input-group-btn">
-                            <button class="btn btn-success" type="button">Save</button>
-                        </span>
-                    </div>
-                    </form>
-                    <!--
-                    <div class="cycleInput">
-                        <label for="workLength" class="cycleLabel">Work Length (in minutes): </label>
-                        <span class="minuteDisplay" id="workDisplay"></span>
-                        <br>
-                        <input type="text" id="workLength"
-                               placeholder="Enter new minutes here.">
-                        <span class="err" id="workErr"></span>
-                    </div>
-    
-                    <div class="cycleInput">
-                        <label for="restLength" class="cycleLabel">Rest Length (in minutes): </label>
-                        <span class="minuteDisplay" id="restDisplay"></span>
-                        <br>
-                        <input type="text" id="restLength"
-                               placeholder="Enter new minutes here.">                
-                        <span class="err" id="restErr"></span>
-                    </div>
-                    
-                    <div class="cycleInput">
-                        <label for="longRestLength" class="cycleLabel">Long Rest Length (in minutes): </label>
-                        <span class="minuteDisplay" id="longRestDisplay"></span>
-                        <br>
-                        <input type="text" id="longRestLength"
-                               placeholder="Enter new minutes here.">                
-                        <span class="err" id="longRestErr"></span>
-                    </div>
-    
-                    <button type="submit" id="saveMinutesBtn">Save</button><span id="saveSuccess"></span>
-                    -->
                 </div>
             </div>
+
             <script src="options.js"></script>
-        </div>
         </div>
     </body>
 </html>
