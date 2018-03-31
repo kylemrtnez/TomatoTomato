@@ -1,20 +1,30 @@
+
+/*
 #websiteList {
     border-top: 1px solid #cecece;
     border-bottom: 1px solid #cecece;
     margin-bottom: 10px;
     padding-bottom:20px;
 }
+*/
+
+body {
+    padding-top: 20px;
+}
 
 #blockPatterns {
     height: 270px;
-    width: 200px;
+    width: 300px;
+    margin-right: 10px;
 }
-
+/*
 select, input {
     border: 1px solid #cecece;
     margin: 7px;
 }
+*/
 
+/*
 h3 {
     font-size: 20px;
     margin-bottom: 10px;
@@ -23,13 +33,12 @@ h3 {
 h4 {
     margin: 2px;
 }
-
+*/
 h5 {
-    margin: 0px;
-    font-size: 15px;
     color: #ff6347;
 }
 
+/*
 p {
     margin: 5px;
     margin-bottom: 15px;
@@ -43,11 +52,13 @@ p {
     margin: 10px;
 }
 
-.minuteDisplay {
-    font-size: 20px;
-    margin: 5px;
+*/
+
+#workDisplay, #restDisplay, #longRestDisplay{
+    font-weight:bold;
 }
 
+/*
 button {
     border: 1px solid #004e83;
     padding: 5px;
@@ -61,7 +72,14 @@ button {
 button:hover {
     background-color: #0061a1;
 }
+*/
+
+.length-label {
+    width: 187px;
+    text-align: right;
+}
 
 #removeSite {
     vertical-align: top;
 }
+

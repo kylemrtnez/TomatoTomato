@@ -30,7 +30,9 @@ const MINUTES = 60*SECONDS;
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
 // Sets up listener for Cycle Length form save button.
-document.getElementById('cycleForm').addEventListener("submit", saveMinutes);
+document.getElementById('workCycleForm').addEventListener("submit", saveMinutes);
+document.getElementById('restCycleForm').addEventListener("submit", saveMinutes);
+document.getElementById('longRestCycleForm').addEventListener("submit", saveMinutes);
 
 // Sets up listener that adds a website to the blocking list on click
 addSiteBtn.addEventListener("click", (event)=> {

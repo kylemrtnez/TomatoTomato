@@ -2,70 +2,124 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
         <link rel="stylesheet" href="options.css">
+
     </head>
     <body>
-        <section>
-            <h3>Notifications:</h3>
-            <form id="notifications">
-                <input type="checkbox" id="popupNotif" name="popupNotif">
-                <label for="popup">Popup Notifications</label>
-            </form>
-        </section>
-
-        <form id="websiteForm">
-            <section id="websiteList">
-                <h3>Block Websites:</h3>
-                <h5>To add a site:</h5>
-                <p>Type in the address below and click "Add Site".</p>
-                <h5>To remove a site:</h5>
-                <p>Select it from the list below and click "Remove Site".</p>
-                <div>
-                    <h4>Website List</h4>
-                    <select id="blockPatterns" multiple="true"></select>            
-                    <button id="removeSite" type="button">Remove Site</button>
-                    </br>
+        <div class="container">
+        <div class="col-lg-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading"><h4>Notifications</h4></div>
+                <div class="panel-body">
+                    <form id="notifications">
+                        <div class="checkbox">
+                            <label for="popup">
+                            <input type="checkbox" id="popupNotif" name="popupNotif">
+                            Turn on pop-up notifications
+                            </label>
+                        </div>
+                    </form>
                 </div>
-                <div>
-                    <input type="text" id="websiteInput" placeholder="Enter site to add here.">
-                    <button id="addSite" type="button">Add Site</button>
+            </div>
+
+            <div class="panel panel-primary" id="websiteList">
+                <div class="panel-heading"><h4>Block Websites</h4></div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>To add a site:</h5>
+                            <p>Type in the address below and click "Add Site".</p>
+                                <div class="form-group">
+                                <div class="input-group">
+                                    <input type="text" id="websiteInput" class="form-control" type="url" placeholder="Enter site to block...">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-success" id="addSite" type="button">Add Site</button>
+                                    </span>
+                                </div>
+                                </div>
+                            <h5>To remove a site:</h5>
+                            <p>Select site from the list and click "Remove Site"</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <h4>Website List</h4>
+                                <select id="blockPatterns" multiple="true" class="form-control"></select>            
+                                    <button class="btn btn-danger" id="removeSite" type="button">Remove Site</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </section>
-        </form>
-            <!-- POMODORO TIMER INPUTS -->
-        <form id="cycleForm">
-            <h3>Cycle Length Settings:</h3>
-            <h5>To change cycle lengths:</h5>
-            <p>Enter the number of minutes you'd like your break to be and click save.</p>
-            <div class="cycleInput">
-                <label for="workLength" class="cycleLabel">Work Length (in minutes): </label>
-                <span class="minuteDisplay" id="workDisplay"></span>
-                <br>
-                <input type="text" id="workLength"
-                       placeholder="Enter new minutes here.">
-                <span class="err" id="workErr"></span>
             </div>
-
-            <div class="cycleInput">
-                <label for="restLength" class="cycleLabel">Rest Length (in minutes): </label>
-                <span class="minuteDisplay" id="restDisplay"></span>
-                <br>
-                <input type="text" id="restLength"
-                       placeholder="Enter new minutes here.">                
-                <span class="err" id="restErr"></span>
+                <!-- POMODORO TIMER INPUTS -->
+            <div class="panel panel-primary">
+                <div class="panel-heading"><h4>Cycle Length Settings</h4></div>
+                <div class="panel-body">
+                    <h5>To change cycle lengths:</h5>
+                    <p>Enter the number of minutes you'd like your break to be and click save.</p>
+                    <form id="workCycleForm">
+                    <div class="input-group">
+                        <span class="input-group-addon length-label" id="workLengthAddon"><em>Work Length:</em> <span class="minuteDisplay" id="workDisplay"></span> min</span>
+                        <input type="text" class="form-control" id="workLength" placeholder="Enter work cycle length..." aria-describedby="workLengthAddon">
+                        <span class="input-group-btn">
+                            <button class="btn btn-success" type="button">Save</button>
+                        </span>
+                    </div>
+                    </form>
+                    <br>
+                    <form id="restCycleForm">
+                    <div class="input-group">
+                        <span class="input-group-addon length-label" id="restLengthAddon"><em>Rest Length:</em> <span class="minuteDisplay" id="restDisplay"></span> min</span>
+                        <input type="text" class="form-control" id="restLength" placeholder="Enter rest cycle length..." aria-describedby="restLengthAddon">
+                        <span class="input-group-btn">
+                            <button class="btn btn-success" type="button">Save</button>
+                        </span>
+                    </div>
+                    </form>
+                    <br>
+                    <form id="longRestCycleForm">
+                    <div class="input-group">
+                        <span class="input-group-addon length-label" id="longRestLengthAddon"><em>Long Rest Length:</em> <span class="minuteDisplay" id="longRestDisplay"></span> min</span>
+                        <input type="text" class="form-control" id="longRestLength" placeholder="Enter long rest cycle length..." aria-describedby="longRestLengthAddon">
+                        <span class="input-group-btn">
+                            <button class="btn btn-success" type="button">Save</button>
+                        </span>
+                    </div>
+                    </form>
+                    <!--
+                    <div class="cycleInput">
+                        <label for="workLength" class="cycleLabel">Work Length (in minutes): </label>
+                        <span class="minuteDisplay" id="workDisplay"></span>
+                        <br>
+                        <input type="text" id="workLength"
+                               placeholder="Enter new minutes here.">
+                        <span class="err" id="workErr"></span>
+                    </div>
+    
+                    <div class="cycleInput">
+                        <label for="restLength" class="cycleLabel">Rest Length (in minutes): </label>
+                        <span class="minuteDisplay" id="restDisplay"></span>
+                        <br>
+                        <input type="text" id="restLength"
+                               placeholder="Enter new minutes here.">                
+                        <span class="err" id="restErr"></span>
+                    </div>
+                    
+                    <div class="cycleInput">
+                        <label for="longRestLength" class="cycleLabel">Long Rest Length (in minutes): </label>
+                        <span class="minuteDisplay" id="longRestDisplay"></span>
+                        <br>
+                        <input type="text" id="longRestLength"
+                               placeholder="Enter new minutes here.">                
+                        <span class="err" id="longRestErr"></span>
+                    </div>
+    
+                    <button type="submit" id="saveMinutesBtn">Save</button><span id="saveSuccess"></span>
+                    -->
+                </div>
             </div>
-            
-            <div class="cycleInput">
-                <label for="longRestLength" class="cycleLabel">Long Rest Length (in minutes): </label>
-                <span class="minuteDisplay" id="longRestDisplay"></span>
-                <br>
-                <input type="text" id="longRestLength"
-                       placeholder="Enter new minutes here.">                
-                <span class="err" id="longRestErr"></span>
-            </div>
-
-            <button type="submit" id="saveMinutesBtn">Save</button><span id="saveSuccess"></span>
-        </form>
-        <script src="options.js"></script>
+            <script src="options.js"></script>
+        </div>
+        </div>
     </body>
 </html>
