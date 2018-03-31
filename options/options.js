@@ -1,8 +1,6 @@
 //TODO: Add restore defaults
 //TODO: Clean up variable names
-//TODO: Override 'enter' button function for 'Add' website
 //TODO: Add Whitelist options and switch for blacklist/whitelist
-//TODO: Enforce integer for timer length
 
 // Get the document ids
 var workLengthInput     = document.querySelector("#workLength");
@@ -16,11 +14,9 @@ var workDisplay         = document.getElementById('workDisplay');
 var restDisplay         = document.getElementById('restDisplay');
 var longRestDisplay     = document.getElementById('longRestDisplay');
 var popupNotif          = document.getElementById('popupNotif');
-var saveMinutesBtn      = document.getElementById('saveMinutesBtn');
 var workLengthBtn       = document.getElementById('workLengthBtn');
 var restLengthBtn       = document.getElementById('restLengthBtn');
 var longRestLengthBtn   = document.getElementById('longRestLengthBtn');
-
 
 const SECONDS = 1000;
 const MINUTES = 60*SECONDS;
@@ -32,12 +28,15 @@ const MINUTES = 60*SECONDS;
 // Restore settings to UI when document elements done loading.
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
-// Cycle length save button listeners
-workLengthBtn.onclick        = function() { saveCycleLength(workLengthInput.id); }
-restLengthBtn.onclick        = function() { saveCycleLength(restLengthInput.id); }
-longRestLengthBtn.onclick    = function() { saveCycleLength(longRestLengthInput.id); }
+/******* WEBSITE LIST LISTENERS *******/
 
-// Website list enter press listener
+// Adds website on button click
+addSiteBtn.onclick = function() {
+    addSiteToList();
+    saveWebsites();
+}
+
+// Website list listener for "enter" button
 websiteInput.addEventListener("keydown", function(event) {
     if ((event.which == 13 || event.keyCode == 13)) {
         event.preventDefault();
@@ -47,47 +46,7 @@ websiteInput.addEventListener("keydown", function(event) {
     }
 });
 
-// Cycle length enter press listeners
-workLengthInput.addEventListener("keydown", function(event) {
-    if ((event.which == 13 || event.keyCode == 13) && isValidInput(workLengthInput)) {
-        event.preventDefault();
-        saveCycleLength(workLengthInput.id);
-    }
-});
-
-restLengthInput.addEventListener("keydown", function(event) {
-    if ((event.which == 13 || event.keyCode == 13) && isValidInput(restLengthInput)) {
-        event.preventDefault();
-        saveCycleLength(restLengthInput.id);
-    }
-});
-
-longRestLengthInput.addEventListener("keydown", function(event) {
-    if ((event.which == 13 || event.keyCode == 13) && isValidInput(longRestLengthInput)) {
-        event.preventDefault();
-        saveCycleLength(longRestLengthInput.id);
-    }
-});
-
-// Sets up listener that adds a website to the blocking list on click
-addSiteBtn.addEventListener("click", (event)=> {
-    event.preventDefault();
-    addSiteToList();
-    saveWebsites();
-});
-
-function addSiteToList() {
-
-    var siteToAdd = websiteInput.value;
-    var last = websiteSelect.options.length;
-
-    //TODO: Some regexrep magic to turn any website entry into a standard *://www.something.something/* format
-
-    websiteSelect.options[last] = new Option(siteToAdd,last);
-    websiteInput.value = null;
-}
-
-// Sets up a listener that removes selected websites from the list.
+// Remove selected sites on click
 removeSiteBtn.addEventListener("click", (event)=> {
     event.preventDefault();
     var elementsToRemove = Array.apply(null, websiteSelect.selectedOptions).map(function(el) { return el.index; });
@@ -97,20 +56,40 @@ removeSiteBtn.addEventListener("click", (event)=> {
     saveWebsites();
 });
 
-function clearSelectElements(idxToClear) {
+/******* CYCLE LENGTH LISTENERS *******/
 
-    for(var idx = idxToClear.length-1; idx >=0 ; idx--){
-        websiteSelect.remove(idxToClear[idx]);
+// Saves cycle lengths on button click
+workLengthBtn.onclick        = function() { saveCycleLength(workLengthInput.id); }
+restLengthBtn.onclick        = function() { saveCycleLength(restLengthInput.id); }
+longRestLengthBtn.onclick    = function() { saveCycleLength(longRestLengthInput.id); }
+
+// Work cycle length listener for "enter" button
+workLengthInput.addEventListener("keydown", function(event) {
+    if ((event.which == 13 || event.keyCode == 13) && isPositiveNumber(workLengthInput)) {
+        event.preventDefault();
+        saveCycleLength(workLengthInput.id);
     }
-}
+});
 
-function isValidInput(inputElement) {
-    return (~isNaN(workLengthInput.value) && workLengthInput.value >= 0);
-}
+// Rest cycle length listener for "enter" button
+restLengthInput.addEventListener("keydown", function(event) {
+    if ((event.which == 13 || event.keyCode == 13) && isPositiveNumber(restLengthInput)) {
+        event.preventDefault();
+        saveCycleLength(restLengthInput.id);
+    }
+});
+
+// Long Rest cycle length listener for "enter" button
+longRestLengthInput.addEventListener("keydown", function(event) {
+    if ((event.which == 13 || event.keyCode == 13) && isPositiveNumber(longRestLengthInput)) {
+        event.preventDefault();
+        saveCycleLength(longRestLengthInput.id);
+    }
+});
 
 // Error checking for working cycle minutes
 workLengthInput.addEventListener("input", ()=> {
-    if (!isValidInput(workLengthInput)) {
+    if (!isPositiveNumber(workLengthInput)) {
         var errMsg = "<strong>Oh Snap!</strong> Please enter a positive number."; 
         formatForErr(workLengthInput);
         showError('cycleError', errMsg);
@@ -152,6 +131,7 @@ longRestLengthInput.addEventListener("input", ()=> {
     }
 })
 
+// Save notification setting on click
 popupNotif.addEventListener("change", ()=> {
     browser.storage.local.get()
         .then((restoredSettings)=> {
@@ -160,15 +140,39 @@ popupNotif.addEventListener("change", ()=> {
         })
 })
 
-
 /**********************************************************************
 * HELPER FUNCTIONS
 ***********************************************************************/
+
+// Adds website to list (does not affect saved data)
+function addSiteToList() {
+
+    var siteToAdd = websiteInput.value;
+    var last = websiteSelect.options.length;
+
+    //TODO: Some regexrep magic to turn any website entry into a standard *://www.something.something/* format
+
+    websiteSelect.options[last] = new Option(siteToAdd,last);
+    websiteInput.value = null;
+}
+
+// Clears website list (does not affect saved data)
+function clearSelectElements(idxToClear) {
+    for(var idx = idxToClear.length-1; idx >=0 ; idx--){
+        websiteSelect.remove(idxToClear[idx]);
+    }
+}
+
+// Checks if an element (cycle length) is a positive number
+function isPositiveNumber(inputElement) {
+    return (~isNaN(inputElement.value) && inputElement.value >= 0);
+}
+
+// Saves cycle lengths
 function saveCycleLength(domId) {
     var gettingStoredSettings = browser.storage.local.get();
 
     if(domId == "workLength" || domId == "workLengthBtn") {
-        console.log("getting data")
         gettingStoredSettings.then((restoredSettings)=> {
             restoredSettings.workLength.userValue = workLengthInput.value*MINUTES/SECONDS;
             saveMinutes(restoredSettings);
@@ -201,8 +205,6 @@ function saveCycleLength(domId) {
             longRestLengthInput.value = null;
         });
     }
-
-
 }
 
 /**********************************************************************
@@ -244,7 +246,7 @@ function saveWebsites() {
     });
 }
 
-// Actually does the restoring
+// Updates UI to reflect stored settings
 function updateUI(restoredSettings)  {
     popupNotif.checked = restoredSettings.popups;
 
@@ -253,12 +255,13 @@ function updateUI(restoredSettings)  {
     restDisplay.textContent       = restoredSettings.restLength.userValue*SECONDS/MINUTES     || restoredSettings.restLength.defaultValue*SECONDS/MINUTES;
     longRestDisplay.textContent   = restoredSettings.longRestLength.userValue*SECONDS/MINUTES || restoredSettings.longRestLength.defaultValue*SECONDS/MINUTES;
 
-    websiteList = restoredSettings.blockPattern.userValue || restoredSettings.blockPattern.defaultValue;
 
+    // Clear the website list before adding the list that's stored
     var allSelectElements = Array.apply(null, {length: websiteSelect.length}).map(Function.call, Math.random);
     clearSelectElements(allSelectElements);
 
     // Add the websites to the list box
+    websiteList = restoredSettings.blockPattern.userValue || restoredSettings.blockPattern.defaultValue;
     for(var idx in websiteList) {
         var listUrl = new WebsiteUrl(websiteList[idx]);
         websiteSelect.options[websiteSelect.options.length] = new Option(listUrl.unformatted(), idx);
