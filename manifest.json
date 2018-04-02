@@ -1,7 +1,7 @@
 {
 
     "manifest_version": 2,
-    "name": "pomodeegzy",
+    "name": "TomatoTomato",
     "version": "0.1",
 
     "description": "A Pomodoro/Focus timer extension that blocks distracting websites during your work sessions.", 
@@ -35,7 +35,7 @@
 
     "browser_action": {
         "default_icon": "icons/pomo48.png",
-        "default_title": "Pomodeegzy",
+        "default_title": "TomatoTomato",
         "default_popup": "popup/menu.html"
 
     }
