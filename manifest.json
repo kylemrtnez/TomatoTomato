@@ -7,8 +7,8 @@
     "description": "A Pomodoro/Focus timer extension that blocks distracting websites during your work sessions.", 
 
     "icons": {
-        "48": "pomo48.png",
-        "96": "pomo96.png"
+        "48": "icons/pomo48.png",
+        "96": "icons/pomo96.png"
     },
 
     "permissions": [
