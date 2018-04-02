@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", restoreOptions);
 
 // Sets up listener for restore defaults button
 restoreDefaultsBtn.addEventListener("click", (event)=> {
-    if (window.confirm("Are you sure? This will erase all your settings.")) {
+    if (window.confirm("Are you sure? This will erase all your settings, including losing your entire website block list.")) {
         restoreDefaults();
     }
 });
@@ -166,6 +166,7 @@ function restoreDefaults(event) {
         userSettings.restLength.userValue       = null;
         userSettings.longRestLength.userValue   = null;
         userSettings.blockPattern.userValue     = null;
+        userSettings.popups                     = true;
 
         // Save settings
         browser.storage.local.set(userSettings);

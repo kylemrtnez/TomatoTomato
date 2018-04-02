@@ -12,6 +12,7 @@ checkingStoredSettings.then((loadedSettings)=> {
             workLength:     {userValue: null, defaultValue: 25*MINUTES/SECONDS},
             restLength:     {userValue: null, defaultValue: 5*MINUTES/SECONDS},
             longRestLength: {userValue: null, defaultValue: 25*MINUTES/SECONDS},
+            popups: true
         });  
     }
 });
