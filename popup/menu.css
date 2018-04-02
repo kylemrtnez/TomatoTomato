@@ -50,53 +50,108 @@ table {
 /*-----------------------------------------------*/
 
 html, body {
-    
-    width: 250px;
+    width: 300px;
     overflow: hidden;
 }
 
+@font-face {
+    font-family: 'Josefin-Sans';
+    src: url('JosefinSans-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Gloria-Hallelujah';
+    src: url('GloriaHallelujah.ttf') format('truetype');
+}
+
+
+.background {
+    background-color: #c3e9ff;
+}
+
+#title-bar {
+    display: flex;
+    background-color: #ffffff;
+    border-bottom: 1px solid #90D6FF
+}
+
 #settings {
-    width: 15px;
-    text-align: left;
-    margin: 5px 10px;
+    text-align: center;
+    margin: 5px 5px;
     font-size: 25px;
-    color: #3d92ca;
+    color: #AAAAAA;
     cursor: pointer;
+
 }
 
 #settings:hover {
-    color: #0061a1;
+    color: #2594dd;
 }
 
- /* -- START/STOP BUTTONS -- */
-.button {
-    margin: 20px 65px;
-    padding: 25px;
+#title {
+    margin: 5px 5px;   
+    margin-right: auto;
+    font-family: 'Gloria-Hallelujah', Fallback, sans-serif;
+    font-size: 20px;
+}
+
+.tomato-o {
+    color: #ff6347;
+}
+
+
+/* -- CYCLE TRACKER -- */
+#cycle-tracker {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    background-color: #c3e9ff;
+    border-right: 1px solid rgb(204, 204, 204);
+    border-left: 1px solid rgb(204, 204, 204);
+    border-bottom: 1px solid rgb(204, 204, 204);
+}
+
+
+.cycle-work {
+    height: 12px;
+    width: 15px;
+    margin: 5px 4px;
+    padding-top: 5px;
     text-align: center;
-    cursor: pointer;
-    background-color: #3d92ca;
-    color: #ffffff;
-    border-radius: 5px;
+    border-radius: 50%;
+    background-color: #ffffff;
 }
 
- 
-#stop {
-    display: none;
+.cycle-rest {
+    height: 4px;
+    width: 15px;
+    margin: 9px 4px 5px 4px;
+    padding-top: 5px;
+    text-align: center;
+    border-radius: 2px;
+    background-color: #ffffff;
 }
 
-.button:hover {
-    background-color: #0061a1;
+.cycle-longrest {
+    width: 30px;
 }
+
+
+#cycle1 {
+    margin-left: 50px;
+}
+
+
 
 
 /* -- TOMATO TIMER DISPLAY -- */
 .top {
-    background-color: #ffefbb;
     color: #ffffff;
     display: flex;
-    margin: 10px;
-    border-radius: 10px;
-    /*box-shadow: 0 10px 6px -6px #777;*/
+    padding-top: 10px;
+    border-right: 1px solid rgb(204, 204, 204);
+    border-left: 1px solid  rgb(204, 204, 204);
+    box-shadow: 0 -2px 2px rgb(204, 204, 204);
 }
 
 #tomato-container {
@@ -109,65 +164,124 @@ html, body {
 #tomato {
     border-radius: 50%;
     background: #ff6347;
-    height: 80px;
-    width: 95px;
+    height: 140px;
+    width: 180px;
+    padding: 10px;
+    text-align: center;
     box-shadow: 0 5px 5px 0 #777;
+    display: flex;
+    flex-direction: column;
 }
   
 #leaves {
     background: rgb(159, 212, 89);
-    height:16px;
-    width:16px;
-    border-radius:16px 0 16px 0;
+    height:40px;
+    width:40px;
+    border-radius:40px 0 40px 0;
     position: absolute;
     transform: rotateZ(135deg);
-    top: 51px;
+    top: 58px;
     z-index: 1;
-    left: 113px;
+    left: 125px;
 }
   
 #leaves::before {
-  content: "";
-  background: rgb(159, 212, 89);
-    height:16px;
-  width:16px;
-  border-radius:16px 0 16px 0;
-  position: absolute;
-  transform: rotateZ(75deg);
-  top: 10px;
-  left: 0px;
-  z-index: 1;
+    content: "";
+    background: rgb(159, 212, 89);
+    height:40px;
+    width:40px;
+    border-radius:40px 0 40px 0;
+    position: absolute;
+    transform: rotateZ(75deg);
+    top: 25px;
+    left: 0px;
+    z-index: 1;
 }
 
 #leaves::after {
   content: "";
   background: rgb(159, 212, 89); 
-    height:16px;
-  width:16px;
-  border-radius:16px 0 16px 0;
+  height:40px;
+  width:40px;
+  border-radius:40px 0 40px 0;
   position: absolute;
   transform: rotateZ(105deg);
   bottom: 2px;
-  right: 12px;
+  right: 25px;
   z-index: 1;
 }
 
 #timer-display {
-    font-size: 20px;
+    font-size: 35px;
     text-align: center;
-    margin: auto;
-    padding: 28px 18px;
+    padding: 10px;
+    padding-top: 45px;
     cursor: default;
+    font-family: sans-serif;
 }
-
-#timer-display::after {
-    content: "\A Time left";
-    font-size: 10px;
-    white-space: pre;
-}
-
 
 #cycle-count {
     font-size: 13px;
     text-align: center;
+}
+
+
+ /* -- START/STOP BUTTONS -- */
+.button {
+    margin: auto;
+    width: 20px;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: #ff6347;
+    color: #ffffff;
+    border: solid 4px #FFFFFF;
+}
+
+#play-icon {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid #ffffff;
+    margin: auto;
+    margin-left: 6px;
+    border-radius: 3px;
+}
+
+#stop-icon {
+    height: 20px;
+    width: 19px;
+    border-radius: 2px;
+    margin: auto;
+    background-color: #ffffff;
+}
+
+#stop {
+    display: none;
+}
+
+.button:hover {
+    background-color: #2594dd;
+}
+
+
+@keyframes glowing {
+    0% { box-shadow: inset 0px 0px 5px 1px #ffbc57, 0px 0px 5px 1px #ffbc57;
+         background: rgba(255, 171, 70, 0.4);
+    } 
+    100% { box-shadow:  inset 0px 0px 2px 1px #ffbc57, 0px 0px 10px 1px #ffbc57; 
+           background: rgba(255, 171, 70, 1);
+    }
+}
+
+@keyframes fillIn {
+    0% {
+        box-shadow: inset 0px 0px 3px 1px #2594dd;
+        background: rgba(37, 148, 221, 0);
+    }
+    100% {
+        box-shadow: inset 0px 0px 5px 1px #2594dd;
+        background: rgba(37, 148, 221, 1);
+    }
 }

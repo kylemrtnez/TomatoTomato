@@ -7,22 +7,48 @@
 </head>
 
 <body>
-
-    <div class="hamburger" id="settings">
-        <i class="fa fa-cog" aria-hidden="true"></i>
+    <!-- TITLE/MENU -->
+    <div id="title-bar">
+        <span id="title">Tomato Tomato</span>
+        <span class="gear" id="settings">
+            <i class="fa fa-cog" aria-hidden="true"></i>
+        </span>
     </div>
+
     <!-- TOMATO TIMER -->
-    <div class="top" id="background">
+    <div class="top background">
         <div id="tomato-container">
             <span id="tomato">
                 <span id="leaves"></span>
                 <div id="timer-display"></div>
+
+                <div class="button" id="start">
+                    <div id="play-icon"></div>
+                </div>
+
+                <div class="button" id="stop">
+                    <div id="stop-icon"></div>
+                </div>
             </span>
         </div>
-    </div>    
-    <div id="cycle-count"></div>
-    <div class="button" id="start">Start</div>
-    <div class="button" id="stop">Stop</div>
+    </div>
+
+    <!-- CYCLE TRACKER -->
+    <div id="cycle-tracker" class="background">
+        <span class="cycle-work cycle-1"></span>
+        <span class="cycle-rest cycle-1"></span>
+        <span class="cycle-work cycle-2"></span>
+        <span class="cycle-rest cycle-2"></span>
+        <span class="cycle-work cycle-3"></span>
+        <span class="cycle-rest cycle-3"></span>
+        <span class="cycle-work cycle-4"></span>
+        <span class="cycle-rest cycle-4 cycle-longrest"></span>
+    </div>
+
+
+
+
+
 
     <script src="menu.js"></script>
 </body>

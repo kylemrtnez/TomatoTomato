@@ -1,58 +1,38 @@
-#websiteList {
-    border-top: 1px solid #cecece;
-    border-bottom: 1px solid #cecece;
-    margin-bottom: 10px;
-    padding-bottom:20px;
+body {
+    padding-top: 20px;
 }
 
-select, input {
-    border: 1px solid #cecece;
-    margin: 7px;
-}
-
-h3 {
-    font-size: 20px;
-    margin-bottom: 10px;
-}
-
-h4 {
-    margin: 2px;
+#blockPatterns {
+    height: 270px;
+    width: 300px;
+    margin-right: 10px;
 }
 
 h5 {
-    margin: 0px;
-    font-size: 15px;
     color: #ff6347;
 }
 
-p {
-    margin: 5px;
-    margin-bottom: 15px;
+#workDisplay, #restDisplay, #longRestDisplay{
+    font-weight:bold;
 }
 
-.cycleLabel {
-    font-size: 15px;
+.length-label {
+    width: 187px;
+    text-align: right;
 }
 
-.cycleInput {
-    margin: 10px;
+#removeSite {
+    vertical-align: top;
 }
 
-.minuteDisplay {
-    font-size: 20px;
-    margin: 5px;
-}
-
-button {
-    border: 1px solid #004e83;
-    padding: 5px;
-    text-align: center;
-    cursor: pointer;
-    background-color: #3d92ca;
-    color: #ffffff;
-    border-radius: 4px;
-}
-
-button:hover {
-    background-color: #0061a1;
+#logo {
+    background-image: url('../icons/analogomato_large.png');
+    background-size:     cover;
+    background-repeat:   no-repeat;
+    background-position: center center;
+    float: left;
+    height: 62px;
+    width: 75px;
+    margin-right: 30px;
+    margin-top: 20px;
 }

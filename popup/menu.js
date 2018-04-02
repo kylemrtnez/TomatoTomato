@@ -9,7 +9,7 @@ var timerDisplay    = document.getElementById('timer-display');
 browser.runtime.onMessage.addListener(function (message) {
     updateDisplay(message.timeLeft || 0);
     updateBackground(message.cycWorking);
-    updateCycleCount(message.cycCount);
+    updateCycle(message.cycCount, message.cycWorking);
 })
 
 // Start the popup update requests
@@ -101,15 +101,19 @@ function updateDisplay(timeLeft) {
 ***********************************************************************/
 function updateBackground(isWorkCycle) {
 
-    var background = document.getElementById('background');
+    var backgrounds = document.getElementsByClassName('background');
     var restColor = '#c3e9ff';
     var workColor = '#ffefbb';
 
     if (isWorkCycle) {
-        background.style.backgroundColor = workColor;
+        for (var i = 0; i < backgrounds.length; i++) {
+            backgrounds[i].style.backgroundColor = workColor;
+        }
     }
     else {
-        background.style.backgroundColor = restColor;
+        for (var i = 0; i < backgrounds.length; i++) {
+            backgrounds[i].style.backgroundColor = restColor;
+        }
     }
 
 }
@@ -120,8 +124,83 @@ function updateBackground(isWorkCycle) {
 * Parameters: count = int of number of cycles
 * Returns: None
 ***********************************************************************/
-function updateCycleCount(count) {
-    var cycleHtml = document.getElementById('cycle-count');
-    cycleHtml.textContent = "Cycle: " + count;
+function updateCycle(count, workCycle) {
+    // if count is 0 then we haven't started a cycle
+    if (count == 0) {
+        resetCycle();
+        return;
+    } 
+
+    var cycleType = 'rest';
+    if (workCycle) {
+        cycleType = 'work';
+    }
+
+    var selectionString = 'cycle-' + cycleType + ' cycle-' + count;
+    var curCycle = document.getElementsByClassName(selectionString);
+    resetCycle();
+    formatCurrent(curCycle[0]);
+    formatPrevious(count, cycleType);
+
+
+    
+    function formatCurrent(domEle, ) {
+        var hiliteBorder = '#FF932D';
+        var hiliteColor = '#ffab46';
+
+        domEle.style.border = '1px solid transparent' + hiliteBorder;
+        domEle.style.backgroundColor = hiliteColor;
+        domEle.style.animation = 'glowing 1.0s infinite alternate';
+    }
+
+    function formatPrevious(num, cycle) {
+        var finishedBorder = '#0084DB';
+        var finishedColor = '#2594DD'
+
+        var restClass = 'cycle-rest';
+        var restCycles = document.getElementsByClassName(restClass);
+        var workClass = 'cycle-work';
+        var workCycles = document.getElementsByClassName(workClass);
+
+        for (var i = 1; i < num; i++) {
+            var idx = i - 1;
+            workCycles[idx].style.border = 'solid 1px ' + finishedBorder;
+            workCycles[idx].style.backgroundColor = finishedColor;
+            workCycles[idx].style.animation = 'fillIn 3.0s';
+
+            restCycles[idx].style.border = 'solid 1px ' + finishedBorder;
+            restCycles[idx].style.backgroundColor = finishedColor;
+            restCycles[idx].style.animation = 'fillIn 3.0s';
+        }
+        if (cycle == 'rest') {
+            workCycles[num - 1].style.border = 'solid 1px ' + finishedBorder;
+            workCycles[num - 1].style.backgroundColor = finishedColor;
+            workCycles[num - 1].style.animation = 'fillIn 3.0s';
+        }
+ 
+    }
+
+
+    function resetCycle() {
+        var restClass = 'cycle-rest';
+        var restCycles = document.getElementsByClassName(restClass);
+        var workClass = 'cycle-work';
+        var workCycles = document.getElementsByClassName(workClass);
+
+        var noBackground = '#FFFFFF';
+
+        for (var i = 0; i < restCycles.length; i++) {
+            restCycles[i].style.border = 'none';
+            restCycles[i].style.backgroundColor = noBackground; 
+            restCycles[i].style.animation = 'none';
+        }
+
+        for (var i = 0; i < workCycles.length; i++) {
+            workCycles[i].style.border = 'none';
+            workCycles[i].style.backgroundColor = noBackground; 
+            workCycles[i].style.animation = 'none';
+        }
+
+    }
 }
 

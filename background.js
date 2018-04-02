@@ -12,6 +12,7 @@ checkingStoredSettings.then((loadedSettings)=> {
             workLength:     {userValue: null, defaultValue: 25*MINUTES/SECONDS},
             restLength:     {userValue: null, defaultValue: 5*MINUTES/SECONDS},
             longRestLength: {userValue: null, defaultValue: 25*MINUTES/SECONDS},
+            popups: true
         });  
     }
 });
@@ -28,7 +29,7 @@ function sendNotification(msg) {
     browser.notifications.create("cycle-notification", {
         "type":     "basic",
         "title":    "Cycle complete!",
-        "iconUrl":  browser.extension.getURL("icons/Tomato.svg"),
+        "iconUrl":  browser.extension.getURL("icons/pomo48.png"),
         "message":  msg
     });
 }
@@ -192,9 +193,13 @@ function BgReceiver() {
                 myCountdown.start();
             },onError);
         }
-
-        sendNotification(notificationMessage);
-
+        browser.storage.local.get("popups")
+            .then( (item)=> {
+                console.log(item.popups);
+                if (item.popups) {
+                    sendNotification(notificationMessage);
+                }
+            }, onError);
     }
     
 

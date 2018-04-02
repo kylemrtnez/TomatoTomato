@@ -7,8 +7,8 @@
     "description": "A Pomodoro/Focus timer extension that blocks distracting websites during your work sessions.", 
 
     "icons": {
-        "48": "Tomato.svg",
-        "96": "Tomato.svg"
+        "48": "pomo48.png",
+        "96": "pomo96.png"
     },
 
     "permissions": [
@@ -29,11 +29,12 @@
     },
 
     "options_ui": {
+        "open_in_tab": true,
         "page": "options/options.html"
     },
 
     "browser_action": {
-        "default_icon": "icons/Tomato.svg",
+        "default_icon": "icons/pomo48.png",
         "default_title": "Pomodeegzy",
         "default_popup": "popup/menu.html"
 

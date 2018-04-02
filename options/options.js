@@ -1,8 +1,5 @@
-//TODO: Add restore defaults
 //TODO: Clean up variable names
-//TODO: Override 'enter' button function for 'Add' website
 //TODO: Add Whitelist options and switch for blacklist/whitelist
-//TODO: Enforce integer for timer length
 
 // Get the document ids
 var workLengthInput     = document.querySelector("#workLength");
@@ -16,7 +13,10 @@ var websiteInput        = document.getElementById('websiteInput');
 var workDisplay         = document.getElementById('workDisplay');
 var restDisplay         = document.getElementById('restDisplay');
 var longRestDisplay     = document.getElementById('longRestDisplay');
-var saveMinutesBtn      = document.getElementById('saveMinutesBtn');
+var popupNotif          = document.getElementById('popupNotif');
+var workLengthBtn       = document.getElementById('workLengthBtn');
+var restLengthBtn       = document.getElementById('restLengthBtn');
+var longRestLengthBtn   = document.getElementById('longRestLengthBtn');
 
 const SECONDS = 1000;
 const MINUTES = 60*SECONDS;
@@ -28,50 +28,83 @@ const MINUTES = 60*SECONDS;
 // Restore settings to UI when document elements done loading.
 document.addEventListener("DOMContentLoaded", restoreOptions);
 
-// Sets up listener for Cycle Length form save button.
-document.getElementById('cycleForm').addEventListener("submit", saveMinutes);
-
-// Sets up listener that adds a website to the blocking list on click
-addSiteBtn.addEventListener("click", (event)=> {
-    var siteToAdd = websiteInput.value;
-    var last = websiteSelect.options.length;
-
-    //TODO: Some regexrep magic to turn any website entry into a standard *://www.something.something/* format
-
-    websiteSelect.options[last] = new Option(siteToAdd,last);
-    websiteInput.value = null;
-    saveWebsites(event);
-});
-
 // Sets up listener for restore defaults button
 restoreDefaultsBtn.addEventListener("click", (event)=> {
-    if (window.confirm("Are you sure? This will erase all your settings.")) {
+    if (window.confirm("Are you sure? This will erase all your settings, including losing your entire website block list.")) {
         restoreDefaults();
     }
 });
 
-// Sets up a listener that removes selected websites from the list.
-removeSiteBtn.addEventListener("click", (event)=> {
-    var elementsToRemove = Array.apply(null, websiteSelect.selectedOptions).map(function(el) { return el.index; });
-    //console.log(elementsToRemove);
-    for(var idx = elementsToRemove.length-1; idx >=0 ; idx--){
-        //console.log(elementsToRemove[idx]);
-        websiteSelect.remove(elementsToRemove[idx]);
+/******* WEBSITE LIST LISTENERS *******/
+
+// Adds website on button click
+addSiteBtn.onclick = function() {
+    addSiteToList();
+    saveWebsites();
+}
+
+// Website list listener for "enter" button
+websiteInput.addEventListener("keydown", function(event) {
+    if ((event.which == 13 || event.keyCode == 13)) {
+        event.preventDefault();
+
+        addSiteToList();
+        saveWebsites();
     }
-    saveWebsites(event);
+});
+
+// Remove selected sites on click
+removeSiteBtn.addEventListener("click", (event)=> {
+    event.preventDefault();
+    var elementsToRemove = Array.apply(null, websiteSelect.selectedOptions).map(function(el) { return el.index; });
+
+    clearSelectElements(elementsToRemove);
+
+    saveWebsites();
+});
+
+/******* CYCLE LENGTH LISTENERS *******/
+
+// Saves cycle lengths on button click
+workLengthBtn.onclick        = function() { saveCycleLength(workLengthInput.id); }
+restLengthBtn.onclick        = function() { saveCycleLength(restLengthInput.id); }
+longRestLengthBtn.onclick    = function() { saveCycleLength(longRestLengthInput.id); }
+
+// Work cycle length listener for "enter" button
+workLengthInput.addEventListener("keydown", function(event) {
+    if ((event.which == 13 || event.keyCode == 13) && isPositiveNumber(workLengthInput)) {
+        event.preventDefault();
+        saveCycleLength(workLengthInput.id);
+    }
+});
+
+// Rest cycle length listener for "enter" button
+restLengthInput.addEventListener("keydown", function(event) {
+    if ((event.which == 13 || event.keyCode == 13) && isPositiveNumber(restLengthInput)) {
+        event.preventDefault();
+        saveCycleLength(restLengthInput.id);
+    }
+});
+
+// Long Rest cycle length listener for "enter" button
+longRestLengthInput.addEventListener("keydown", function(event) {
+    if ((event.which == 13 || event.keyCode == 13) && isPositiveNumber(longRestLengthInput)) {
+        event.preventDefault();
+        saveCycleLength(longRestLengthInput.id);
+    }
 });
 
 // Error checking for working cycle minutes
 workLengthInput.addEventListener("input", ()=> {
-    if (isNaN(workLengthInput.value)) {
-        var workLengthErrMsg = "Please enter a number."; 
+    if (!isPositiveNumber(workLengthInput)) {
+        var errMsg = "<strong>Oh Snap!</strong> Please enter a positive number."; 
         formatForErr(workLengthInput);
-        updateText('workErr', workLengthErrMsg);
-        saveMinutesBtn.disabled = true;
+        showError('cycleError', errMsg);
+        workLengthBtn.disabled = true;
     } else { 
         clearErrFormat(workLengthInput);
-        clearText('workErr');
-        saveMinutesBtn.disabled = false;
+        clearError('cycleError');
+        workLengthBtn.disabled = false;
     }
 })
 
@@ -79,13 +112,14 @@ workLengthInput.addEventListener("input", ()=> {
 restLengthInput.addEventListener("input", ()=> {
     if (isNaN(restLengthInput.value)) {
         var restLengthErrMsg = "Please enter a number."; 
+        var errMsg = "<strong>Oh Snap!</strong> Please enter a positive number."; 
         formatForErr(restLengthInput);
-        updateText('restErr', restLengthErrMsg);
-        saveMinutesBtn.disabled = true;
+        showError('cycleError', errMsg);
+        restLengthBtn.disabled = true;
     } else { 
         clearErrFormat(restLengthInput);
-        clearText('restErr');
-        saveMinutesBtn.disabled = false;
+        clearError('cycleError');
+        restLengthBtn.disabled = false;
     }
 })
 
@@ -93,14 +127,24 @@ restLengthInput.addEventListener("input", ()=> {
 longRestLengthInput.addEventListener("input", ()=> {
     if (isNaN(longRestLengthInput.value)) {
         var longRestLengthErrMsg = "Please enter a number."; 
+        var errMsg = "<strong>Oh Snap!</strong> Please enter a positive number."; 
         formatForErr(longRestLengthInput);
-        updateText('longRestErr', longRestLengthErrMsg);
-        saveMinutesBtn.disabled = true;
+        showError('cycleError', errMsg);
+        longRestLengthBtn.disabled = true;
     } else { 
         clearErrFormat(longRestLengthInput);
-        clearText('longRestErr');
-        saveMinutesBtn.disabled = false;
+        clearError('cycleError');
+        longRestLengthBtn.disabled = false;
     }
+})
+
+// Save notification setting on click
+popupNotif.addEventListener("change", ()=> {
+    browser.storage.local.get()
+        .then((restoredSettings)=> {
+            restoredSettings.popups = popupNotif.checked;
+            browser.storage.local.set(restoredSettings);
+        })
 })
 
 /**********************************************************************
@@ -122,6 +166,7 @@ function restoreDefaults(event) {
         userSettings.restLength.userValue       = null;
         userSettings.longRestLength.userValue   = null;
         userSettings.blockPattern.userValue     = null;
+        userSettings.popups                     = true;
 
         // Save settings
         browser.storage.local.set(userSettings);
@@ -131,6 +176,68 @@ function restoreDefaults(event) {
     });
 }
 
+// Adds website to list (does not affect saved data)
+function addSiteToList() {
+
+    var siteToAdd = websiteInput.value;
+    var last = websiteSelect.options.length;
+
+    //TODO: Some regexrep magic to turn any website entry into a standard *://www.something.something/* format
+
+    websiteSelect.options[last] = new Option(siteToAdd,last);
+    websiteInput.value = null;
+}
+
+// Clears website list (does not affect saved data)
+function clearSelectElements(idxToClear) {
+    for(var idx = idxToClear.length-1; idx >=0 ; idx--){
+        websiteSelect.remove(idxToClear[idx]);
+    }
+}
+
+// Checks if an element (cycle length) is a positive number
+function isPositiveNumber(inputElement) {
+    return (~isNaN(inputElement.value) && inputElement.value >= 0);
+}
+
+// Saves cycle lengths
+function saveCycleLength(domId) {
+    var gettingStoredSettings = browser.storage.local.get();
+
+    if(domId == "workLength" || domId == "workLengthBtn") {
+        gettingStoredSettings.then((restoredSettings)=> {
+            restoredSettings.workLength.userValue = workLengthInput.value*MINUTES/SECONDS;
+            saveMinutes(restoredSettings);
+
+            updateUI(restoredSettings);
+
+            // Clear current text
+            workLengthInput.value = null;
+        });
+    }
+    if(domId == "restLength" || domId == "restLengthBtn") {
+        gettingStoredSettings.then((restoredSettings)=> {
+            restoredSettings.restLength.userValue = restLengthInput.value*MINUTES/SECONDS;
+            saveMinutes(restoredSettings);
+
+            updateUI(restoredSettings);
+
+            // Clear current text
+            restLengthInput.value = null;
+        });
+    }
+    if(domId == "longRestLength" || domId == "longRestLengthBtn") {
+        gettingStoredSettings.then((restoredSettings)=> {
+            restoredSettings.longRestLength.userValue = longRestLengthInput.value*MINUTES/SECONDS;
+            saveMinutes(restoredSettings);
+
+            updateUI(restoredSettings);
+
+            // Clear current text
+            longRestLengthInput.value = null;
+        });
+    }
+}
 
 /**********************************************************************
 * saveMinutes
@@ -138,36 +245,14 @@ function restoreDefaults(event) {
 * Parameters: None 
 * Returns: None 
 ***********************************************************************/
-function saveMinutes(event) {
-    event.preventDefault(); 
-    
-
-    
-    var gettingStoredSettings = browser.storage.local.get();
-    gettingStoredSettings.then((restoredSettings)=> {
-
-        // Overwrite the user settings with the new settings
-        if (workLengthInput.value != "") {
-            restoredSettings.workLength.userValue = workLengthInput.value*MINUTES/SECONDS;
-        }
-
-        if (restLengthInput.value != "") {
-            restoredSettings.restLength.userValue = restLengthInput.value*MINUTES/SECONDS;
-        }
-
-        if (longRestLengthInput.value != "") {
-            restoredSettings.longRestLength.userValue = longRestLengthInput.value*MINUTES/SECONDS;
-        }
-        
+function saveMinutes(settings) {
         // Save updated settings to local storage
-        browser.storage.local.set(restoredSettings);
+        browser.storage.local.set(settings);
 
         // Update displays 
-        workDisplay.textContent       = restoredSettings.workLength.userValue*SECONDS/MINUTES     || restoredSettings.workLength.defaultValue*SECONDS/MINUTES;
-        restDisplay.textContent       = restoredSettings.restLength.userValue*SECONDS/MINUTES     || restoredSettings.restLength.defaultValue*SECONDS/MINUTES;
-        longRestDisplay.textContent   = restoredSettings.longRestLength.userValue*SECONDS/MINUTES || restoredSettings.longRestLength.defaultValue*SECONDS/MINUTES;
-    });
-
+        workDisplay.textContent       = settings.workLength.userValue*SECONDS/MINUTES     || settings.workLength.defaultValue*SECONDS/MINUTES;
+        restDisplay.textContent       = settings.restLength.userValue*SECONDS/MINUTES     || settings.restLength.defaultValue*SECONDS/MINUTES;
+        longRestDisplay.textContent   = settings.longRestLength.userValue*SECONDS/MINUTES || settings.longRestLength.defaultValue*SECONDS/MINUTES;
 }
 
 /**********************************************************************
@@ -177,8 +262,7 @@ function saveMinutes(event) {
 * Parameters: The event from the event listener
 * Returns: None
 ***********************************************************************/
-function saveWebsites(event) {
-    event.preventDefault();
+function saveWebsites() {
 
     var gettingStoredWebsites = browser.storage.local.get();
     gettingStoredWebsites.then((restoredSettings)=> {
@@ -194,6 +278,28 @@ function saveWebsites(event) {
     });
 }
 
+// Updates UI to reflect stored settings
+function updateUI(restoredSettings)  {
+    popupNotif.checked = restoredSettings.popups;
+
+    // Update the timer value 
+    workDisplay.textContent       = restoredSettings.workLength.userValue*SECONDS/MINUTES     || restoredSettings.workLength.defaultValue*SECONDS/MINUTES;
+    restDisplay.textContent       = restoredSettings.restLength.userValue*SECONDS/MINUTES     || restoredSettings.restLength.defaultValue*SECONDS/MINUTES;
+    longRestDisplay.textContent   = restoredSettings.longRestLength.userValue*SECONDS/MINUTES || restoredSettings.longRestLength.defaultValue*SECONDS/MINUTES;
+
+
+    // Clear the website list before adding the list that's stored
+    var allSelectElements = Array.apply(null, {length: websiteSelect.length}).map(Function.call, Math.random);
+    clearSelectElements(allSelectElements);
+
+    // Add the websites to the list box
+    websiteList = restoredSettings.blockPattern.userValue || restoredSettings.blockPattern.defaultValue;
+    for(var idx in websiteList) {
+        var listUrl = new WebsiteUrl(websiteList[idx]);
+        websiteSelect.options[websiteSelect.options.length] = new Option(listUrl.unformatted(), idx);
+    }
+}
+  
 /**********************************************************************
 * Description: Restores settings from local storage when options page
 *               is loaded. Uses defaults 
@@ -204,27 +310,6 @@ function restoreOptions() {
 
     function onError(error) {
         console.log(`Error: ${error}`);
-    }
-  
-    // Actually does the restoring
-    function updateUI(restoredSettings) {
-        // Update the timer value 
-        workDisplay.textContent       = restoredSettings.workLength.userValue*SECONDS/MINUTES     || restoredSettings.workLength.defaultValue*SECONDS/MINUTES;
-        restDisplay.textContent       = restoredSettings.restLength.userValue*SECONDS/MINUTES     || restoredSettings.restLength.defaultValue*SECONDS/MINUTES;
-        longRestDisplay.textContent   = restoredSettings.longRestLength.userValue*SECONDS/MINUTES || restoredSettings.longRestLength.defaultValue*SECONDS/MINUTES;
-
-        websiteList = restoredSettings.blockPattern.userValue || restoredSettings.blockPattern.defaultValue;
-
-        // Clear the website list before repopulating
-        for (var idx = (websiteSelect.options.length - 1); idx >= 0; idx--) {
-            websiteSelect.remove(idx);
-        }
-
-        // Add the websites to the list box
-        for(var idx in websiteList) {
-            var listUrl = new WebsiteUrl(websiteList[idx]);
-            websiteSelect.options[websiteSelect.options.length] = new Option(listUrl.unformatted(), idx);
-        }
     }
   
     // Grabs the settings, then tells it to update input field w that data
@@ -262,26 +347,28 @@ function clearErrFormat(domElement) {
 }
 
 /**********************************************************************
-* updateText
+* showError
 * Description: Display an error message by inserting text into a 
 *               specified DOM element
 * Parameters: The DOM element ID to insert the message, a string with the
 *               error message.
 * Returns: None 
 ***********************************************************************/
-function updateText(domId, msg) {
+function showError(domId, msg) {
     var element = document.getElementById(domId);
-    element.textContent = msg;
+    element.hidden = false;
+    element.innerHTML = msg;
 }
 
 /**********************************************************************
-* clearErrText
+* clearError
 * Description: Clears text content of a specified DOM element
 * Parameters: The DOM element ID to be cleared 
 * Returns: None 
 ***********************************************************************/
-function clearText(domId) {
+function clearError(domId) {
     var clearThisElement = document.getElementById(domId);
+    clearThisElement.hidden = true;
     clearThisElement.textContent = "";
 }
 
