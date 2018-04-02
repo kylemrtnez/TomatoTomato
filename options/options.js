@@ -1,4 +1,3 @@
-//TODO: Add restore defaults
 //TODO: Clean up variable names
 //TODO: Add Whitelist options and switch for blacklist/whitelist
 
@@ -8,6 +7,7 @@ var restLengthInput     = document.querySelector("#restLength");
 var longRestLengthInput = document.querySelector("#longRestLength");
 var addSiteBtn          = document.getElementById('addSite');
 var removeSiteBtn       = document.getElementById('removeSite');
+var restoreDefaultsBtn  = document.getElementById('restoreDefaultsBtn');
 var websiteSelect       = document.getElementById('blockPatterns');
 var websiteInput        = document.getElementById('websiteInput');
 var workDisplay         = document.getElementById('workDisplay');
@@ -27,6 +27,13 @@ const MINUTES = 60*SECONDS;
 
 // Restore settings to UI when document elements done loading.
 document.addEventListener("DOMContentLoaded", restoreOptions);
+
+// Sets up listener for restore defaults button
+restoreDefaultsBtn.addEventListener("click", (event)=> {
+    if (window.confirm("Are you sure? This will erase all your settings.")) {
+        restoreDefaults();
+    }
+});
 
 /******* WEBSITE LIST LISTENERS *******/
 
@@ -143,6 +150,30 @@ popupNotif.addEventListener("change", ()=> {
 /**********************************************************************
 * HELPER FUNCTIONS
 ***********************************************************************/
+
+/**********************************************************************
+* restoreDefaults
+* Description: Restores the default settings
+* Parameters: None 
+* Returns: None 
+***********************************************************************/
+function restoreDefaults(event) {
+    console.log("restore defaults");
+    //For each data member, set userValue to null
+    var gettingStoredSettings = browser.storage.local.get();
+    gettingStoredSettings.then((userSettings)=> {
+        userSettings.workLength.userValue       = null;
+        userSettings.restLength.userValue       = null;
+        userSettings.longRestLength.userValue   = null;
+        userSettings.blockPattern.userValue     = null;
+
+        // Save settings
+        browser.storage.local.set(userSettings);
+
+        // Update the page
+        restoreOptions();
+    });
+}
 
 // Adds website to list (does not affect saved data)
 function addSiteToList() {
