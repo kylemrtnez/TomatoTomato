@@ -6,7 +6,7 @@ var settingsBtn     = document.getElementById('settings');
 var timerDisplay    = document.getElementById('timer-display');
 
 // Set up listener for updates from background
-browser.runtime.onMessage.addListener(function (message) {
+chrome.runtime.onMessage.addListener(function (message) {
     updateDisplay(message.timeLeft || 0);
     updateBackground(message.cycWorking);
     updateCycle(message.cycCount, message.cycWorking);
@@ -31,7 +31,7 @@ stopBtn.addEventListener("click", ()=> {
 
 // Open options extension options page when settings button is clicked
 settingsBtn.addEventListener("click", ()=> {
-    var opening = browser.runtime.openOptionsPage();
+    var opening = chrome.runtime.openOptionsPage();
 })
 
 
@@ -57,7 +57,7 @@ function updatePopup() {
 * Returns: None
 ***********************************************************************/
 function sendBackgroundMsg(blockOrUnblock) {
-    browser.runtime.sendMessage({action: blockOrUnblock});
+    chrome.runtime.sendMessage({action: blockOrUnblock});
 }
 
 /**********************************************************************

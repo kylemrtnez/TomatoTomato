@@ -4,32 +4,30 @@ const SECONDS = 1000;
 const MINUTES = 60*SECONDS;
 
 // Set up default options if necessary
-var checkingStoredSettings = browser.storage.local.get();
-checkingStoredSettings.then((loadedSettings)=> { 
-    if( loadedSettings.blockPattern == null ) {
-        browser.storage.local.set({
-            blockPattern:   {userValue: null, defaultValue: ["*://www.reddit.com/*", "*://www.facebook.com/*"]},
-            workLength:     {userValue: null, defaultValue: 25*MINUTES/SECONDS},
-            restLength:     {userValue: null, defaultValue: 5*MINUTES/SECONDS},
-            longRestLength: {userValue: null, defaultValue: 25*MINUTES/SECONDS},
-            popups: true
-        });  
+chrome.storage.local.get(['blockPattern'], function(items) {
+    //console.log(items.blockPattern);
+    if(items.blockPattern == null) {
+        chrome.storage.local.set({blockPattern:   {userValue: null, defaultValue: ['*://www.reddit.com/*','*://www.facebook.com/*']},
+                                  workLength:     {userValue: null, defaultValue: 25*MINUTES/SECONDS},
+                                  restLength:     {userValue: null, defaultValue: 5*MINUTES/SECONDS},
+                                  longRestLength: {userValue: null, defaultValue: 25*MINUTES/SECONDS}
+        });
     }
 });
 
 var original = BgReceiver();
 // Listener for message from popup. 
-browser.runtime.onMessage.addListener(original.decipher);
+chrome.runtime.onMessage.addListener(original.decipher);
 
 function onError(error) {
     console.log(`Error: ${error}`);
 }
 
 function sendNotification(msg) {
-    browser.notifications.create("cycle-notification", {
+    chrome.notifications.create("cycle-notification", {
         "type":     "basic",
         "title":    "Cycle complete!",
-        "iconUrl":  browser.extension.getURL("icons/pomo48.png"),
+        "iconUrl":  chrome.extension.getURL("icons/pomo48.png"),
         "message":  msg
     });
 }
@@ -47,7 +45,7 @@ function sendMenuMsg(seconds, count, workingFlag) {
         cycWorking: workingFlag
     };
 
-    browser.runtime.sendMessage(contents);
+    chrome.runtime.sendMessage(contents);
 }
 
 /**********************************************************************
@@ -72,9 +70,9 @@ function BgReceiver() {
             case 'block':
                 cycleTracker.toggle();
 
-                if (!browser.webRequest.onBeforeRequest.hasListener(redirect)) {
+                if (!chrome.webRequest.onBeforeRequest.hasListener(redirect)) {
                     // Get the stored block patterns and work session length and start blocking
-                    browser.storage.local.get(["blockPattern", "workLength"]).then( (item) => {
+                    chrome.storage.local.get(["blockPattern", "workLength"], (item) => {
                         // Block the pages
                         blockPages( item.blockPattern.userValue || item.blockPattern.defaultValue );
                         
@@ -84,7 +82,7 @@ function BgReceiver() {
 
                         // Inform menu immediately of changes
                         sendMenuMsg(myCountdown.getTime(), cycleTracker.cycleNum(), cycleTracker.isWorking());
-                    },onError); // TODO: Stop timer if there's an error. Would the timer have started if we reach this error callback?
+                    }); // TODO: Stop timer if there's an error. Would the timer have started if we reach this error callback?
                 }
                 break;
 
@@ -120,9 +118,9 @@ function BgReceiver() {
     * Returns: None
     ***********************************************************************/
     function blockPages(pattern) {
-        console.log(pattern);
+        //console.log(pattern);
 
-        browser.webRequest.onBeforeRequest.addListener(
+        chrome.webRequest.onBeforeRequest.addListener(
             redirect,
             {urls: pattern}, 
             ["blocking"]
@@ -135,7 +133,7 @@ function BgReceiver() {
     * Returns: Object with new URL
     ***********************************************************************/
     function redirect(reqDetails) {
-        return {redirectUrl: browser.extension.getURL("redirect/blocked.html")};
+        return {redirectUrl: chrome.extension.getURL("redirect/blocked.html")};
     }
 
     /**********************************************************************
@@ -145,7 +143,7 @@ function BgReceiver() {
     * Returns: None
     ***********************************************************************/
     function unblockPages() {
-        browser.webRequest.onBeforeRequest.removeListener(redirect);
+        chrome.webRequest.onBeforeRequest.removeListener(redirect);
     }
 
     /**********************************************************************
@@ -166,20 +164,20 @@ function BgReceiver() {
             if (cycleTracker.isLongBreak()) {
                 var notificationMessage = "Congrats on the hard work! Take a long break.";
 
-                browser.storage.local.get("longRestLength").then( (item) => {
+                chrome.storage.local.get("longRestLength",(item) => {
                     unblockPages();
                     myCountdown = createTimer(item.longRestLength.userValue || item.longRestLength.defaultValue); 
                     myCountdown.start();
-                },onError);
+                });
  
             } else {
                 var notificationMessage = "Congrats on the hard work! Take a short break.";
 
-                browser.storage.local.get("restLength").then( (item) => {
+                chrome.storage.local.get("restLength", (item) => {
                     unblockPages();
                     myCountdown = createTimer(item.restLength.userValue || item.restLength.defaultValue); 
                     myCountdown.start();
-                },onError);
+                });
             }
         } else {
             var notificationMessage = "Time to get to work!";
@@ -187,19 +185,18 @@ function BgReceiver() {
             // switching to working cycle
             cycleTracker.toggle();
 
-            browser.storage.local.get(["blockPattern", "workLength"]).then( (item) => {
+            chrome.storage.local.get(["blockPattern", "workLength"], (item) => {
                 blockPages( item.blockPattern.userValue || item.blockPattern.defaultValue );
                 myCountdown = createTimer(item.workLength.userValue || item.workLength.defaultValue);
                 myCountdown.start();
-            },onError);
+            });
         }
-        browser.storage.local.get("popups")
-            .then( (item)=> {
-                console.log(item.popups);
-                if (item.popups) {
-                    sendNotification(notificationMessage);
-                }
-            }, onError);
+        chrome.storage.local.get("popups", (item)=> {
+            //console.log(item.popups);
+            if (item.popups) {
+                sendNotification(notificationMessage);
+            }
+        });
     }
     
 
