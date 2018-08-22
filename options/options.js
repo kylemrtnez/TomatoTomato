@@ -140,12 +140,11 @@ longRestLengthInput.addEventListener("input", ()=> {
 
 // Save notification setting on click
 popupNotif.addEventListener("change", ()=> {
-    browser.storage.local.get()
-        .then((restoredSettings)=> {
+    chrome.storage.local.get(null,(restoredSettings)=> {
             restoredSettings.popups = popupNotif.checked;
-            browser.storage.local.set(restoredSettings);
-        })
-})
+            chrome.storage.local.set(restoredSettings);
+    });
+});
 
 /**********************************************************************
 * HELPER FUNCTIONS
@@ -160,7 +159,7 @@ popupNotif.addEventListener("change", ()=> {
 function restoreDefaults(event) {
     console.log("restore defaults");
     //For each data member, set userValue to null
-    var gettingStoredSettings = browser.storage.local.get();
+    var gettingStoredSettings = chrome.storage.local.get();
     gettingStoredSettings.then((userSettings)=> {
         userSettings.workLength.userValue       = null;
         userSettings.restLength.userValue       = null;
@@ -169,7 +168,7 @@ function restoreDefaults(event) {
         userSettings.popups                     = true;
 
         // Save settings
-        browser.storage.local.set(userSettings);
+        chrome.storage.local.set(userSettings);
 
         // Update the page
         restoreOptions();
@@ -202,10 +201,8 @@ function isPositiveNumber(inputElement) {
 
 // Saves cycle lengths
 function saveCycleLength(domId) {
-    var gettingStoredSettings = browser.storage.local.get();
-
-    if(domId == "workLength" || domId == "workLengthBtn") {
-        gettingStoredSettings.then((restoredSettings)=> {
+    chrome.storage.local.get(null,function(restoredSettings) {
+        if(domId == "workLength" || domId == "workLengthBtn") {
             restoredSettings.workLength.userValue = workLengthInput.value*MINUTES/SECONDS;
             saveMinutes(restoredSettings);
 
@@ -213,10 +210,8 @@ function saveCycleLength(domId) {
 
             // Clear current text
             workLengthInput.value = null;
-        });
-    }
-    if(domId == "restLength" || domId == "restLengthBtn") {
-        gettingStoredSettings.then((restoredSettings)=> {
+        }
+        if(domId == "restLength" || domId == "restLengthBtn") {
             restoredSettings.restLength.userValue = restLengthInput.value*MINUTES/SECONDS;
             saveMinutes(restoredSettings);
 
@@ -224,10 +219,8 @@ function saveCycleLength(domId) {
 
             // Clear current text
             restLengthInput.value = null;
-        });
-    }
-    if(domId == "longRestLength" || domId == "longRestLengthBtn") {
-        gettingStoredSettings.then((restoredSettings)=> {
+        }
+        if(domId == "longRestLength" || domId == "longRestLengthBtn") {
             restoredSettings.longRestLength.userValue = longRestLengthInput.value*MINUTES/SECONDS;
             saveMinutes(restoredSettings);
 
@@ -235,8 +228,8 @@ function saveCycleLength(domId) {
 
             // Clear current text
             longRestLengthInput.value = null;
-        });
-    }
+        }
+    });
 }
 
 /**********************************************************************
@@ -247,7 +240,7 @@ function saveCycleLength(domId) {
 ***********************************************************************/
 function saveMinutes(settings) {
         // Save updated settings to local storage
-        browser.storage.local.set(settings);
+        chrome.storage.local.set(settings);
 
         // Update displays 
         workDisplay.textContent       = settings.workLength.userValue*SECONDS/MINUTES     || settings.workLength.defaultValue*SECONDS/MINUTES;
@@ -264,8 +257,7 @@ function saveMinutes(settings) {
 ***********************************************************************/
 function saveWebsites() {
 
-    var gettingStoredWebsites = browser.storage.local.get();
-    gettingStoredWebsites.then((restoredSettings)=> {
+    chrome.storage.local.get(null,(restoredSettings)=> {
         // Overwrite block patterns with new list
         restoredSettings.blockPattern.userValue = Array.apply(null, websiteSelect.options).map(
             function(el) { 
@@ -274,7 +266,7 @@ function saveWebsites() {
             }) // this crap is needed because HTMLSelectElement.Option returns stupid stuff
 
         // Save updated website list
-        browser.storage.local.set(restoredSettings);
+        chrome.storage.local.set(restoredSettings);
     });
 }
 
@@ -313,8 +305,7 @@ function restoreOptions() {
     }
   
     // Grabs the settings, then tells it to update input field w that data
-    var gettingStoredSettings = browser.storage.local.get();
-    gettingStoredSettings.then(updateUI, onError);
+    chrome.storage.local.get(null,updateUI);
 }
 
 /**********************************************************************
