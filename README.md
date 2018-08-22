@@ -6,5 +6,5 @@ Key Features:
 - Customizable list of blocked websites
 - Notification upon cycle completion
 
-Pomodoro™/Focus Timer extension for Mozilla. The Pomodoro Technique® and Pomodoro™ are registered trademarks of Francesco Cirillo. 
+Pomodoro™/Focus Timer extension for Mozilla and Chrome. The Pomodoro Technique® and Pomodoro™ are registered trademarks of Francesco Cirillo. 
 
