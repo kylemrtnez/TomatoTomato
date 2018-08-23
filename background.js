@@ -23,6 +23,16 @@ function onError(error) {
     console.log(`Error: ${error}`);
 }
 
+function audioNotification(type) {
+    var notifSound;
+    if(type === 'start-work-cycle') {
+        notifSound = new Audio('sounds/start-work-cycle.mp3');
+    } else if (type === 'start-rest-cycle') {
+        notifSound = new Audio('sounds/start-rest-cycle.mp3');
+    }
+    notifSound.play();
+}
+
 function sendNotification(msg) {
     chrome.notifications.create("cycle-notification", {
         "type":     "basic",
@@ -166,6 +176,7 @@ function BgReceiver() {
             // if long break, get long break seconds            
             if (cycleTracker.isLongBreak()) {
                 var notificationMessage = "Congrats on the hard work! Take a long break.";
+                var notificationSound = 'start-rest-cycle';
 
                 chrome.storage.local.get("longRestLength",(item) => {
                     unblockPages();
@@ -175,6 +186,7 @@ function BgReceiver() {
  
             } else {
                 var notificationMessage = "Congrats on the hard work! Take a short break.";
+                var notificationSound = 'start-rest-cycle';
 
                 chrome.storage.local.get("restLength", (item) => {
                     unblockPages();
@@ -184,6 +196,7 @@ function BgReceiver() {
             }
         } else {
             var notificationMessage = "Time to get to work!";
+            var notificationSound = 'start-work-cycle';
 
             // switching to working cycle
             cycleTracker.toggle();
@@ -198,6 +211,7 @@ function BgReceiver() {
             //console.log(item.popups);
             if (item.popups) {
                 sendNotification(notificationMessage);
+                audioNotification(notificationSound);
             }
         });
     }
