@@ -75,7 +75,7 @@ function BgReceiver() {
                     chrome.storage.local.get(["blockPattern", "workLength"], (item) => {
                         // Block the pages
                         blockPages( item.blockPattern.userValue || item.blockPattern.defaultValue );
-                        
+
                         // Create a countdown timer and start it
                         myCountdown = createTimer(item.workLength.userValue || item.workLength.defaultValue);
                         myCountdown.start();
@@ -119,6 +119,7 @@ function BgReceiver() {
     ***********************************************************************/
     function blockPages(pattern) {
         //console.log(pattern);
+        chrome.browserAction.setBadgeBackgroundColor({color: "#ff670f"});
 
         chrome.webRequest.onBeforeRequest.addListener(
             redirect,
@@ -144,6 +145,8 @@ function BgReceiver() {
     ***********************************************************************/
     function unblockPages() {
         chrome.webRequest.onBeforeRequest.removeListener(redirect);
+
+        chrome.browserAction.setBadgeBackgroundColor({color: "#4292f4"});
     }
 
     /**********************************************************************
@@ -278,14 +281,19 @@ function CountdownTimer() {
     ***********************************************************************/
     function startTimer() {
         var timeLeft = countdownLength || 0;
+        chrome.browserAction.setBadgeText({text: Math.ceil(timeLeft/60).toString()});
 
         // timer
         intervalID = window.setInterval(()=> {
             timeLeft--;
+            chrome.browserAction.setBadgeText({text: Math.ceil(timeLeft/60).toString()});
 
             setTimer(timeLeft);
 
+            if (timeLeft <= 1*MINUTES/SECONDS) chrome.browserAction.setBadgeBackgroundColor({color: 'red'});
+
             if (timeLeft <= 0) {
+                chrome.browserAction.setBadgeText({text: ''});
                 stopTimer();
 
                 if (countdownFunc != null) {

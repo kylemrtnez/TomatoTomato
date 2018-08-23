@@ -24,6 +24,7 @@ startBtn.addEventListener("click", ()=> {
 
 // Stop button listener
 stopBtn.addEventListener("click", ()=> {
+    chrome.browserAction.setBadgeText({text: ""});
     sendBackgroundMsg('unblock');
     stopBtn.style.display = 'none';
     startBtn.style.display = 'block';
