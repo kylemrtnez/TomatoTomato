@@ -4,7 +4,7 @@
 *               current cycle. Handles logic for switching the cycles.
 ***********************************************************************/
 function CycleManager() {
-    var working = false;
+    var isWorkCycle = false;
     var cycleCount = 0;
     var longBreakFlag = false;
     var longBreakEvery = 4;
@@ -21,7 +21,7 @@ function CycleManager() {
     *              cycleNum: returns the current cycle number
     ***********************************************************************/
     var publicAPI = {
-        toggle: toggleCycle,
+        toggle: updateCycle,
         reset: resetCycle,
         isWorking: getWorkCycle,
         isLongBreak: getLongBreak,
@@ -30,20 +30,30 @@ function CycleManager() {
 
 
     /**********************************************************************
-    * toggleCycle
-    * Description: Toggles 'working' variable depending on its' current
-    *               value. Also checks if we are on a long break each
-    *               break cycle.
+    * updateCycle
+    * Description: Updates cycle variables (isWorkCycle, cycleCount ,
+    *              longBreakFlag) as necessary. Publically exposed.
     * Parameters: None 
     * Returns: None 
     ***********************************************************************/
-    function toggleCycle() {
-        if (working) {
-            working = false;
-            checkLongBreak(longBreakEvery);
-        } else {
-            working = true;
-            incCycleCount();
+    function updateCycle() {
+        toggleCycle();
+        updateCycleCount();
+        checkLongBreak(longBreakEvery);
+
+        function updateCycleCount() {
+            // increase cycle count once for a work/rest pairing
+            if (isWorkCycle) {
+                incCycleCount();
+            }
+        }
+
+        function toggleCycle() {
+            if (isWorkCycle) {
+                isWorkCycle = false;
+            } else {
+                isWorkCycle = true;
+            }
         }
     }
 
@@ -54,8 +64,8 @@ function CycleManager() {
     *                      ex. checkLongBreak(4) means every 4th break is long 
     * Returns: None 
     ***********************************************************************/
-    function checkLongBreak(lbNum) {
-        if ((cycleCount % lbNum) == 0) {
+    function checkLongBreak(frequency) {
+        if ((cycleCount % frequency) == 0) {
             longBreakFlag = true;
         } else {
             longBreakFlag = false;
@@ -81,7 +91,7 @@ function CycleManager() {
     ***********************************************************************/
     function resetCycle() {
         cycleCount = 0;
-        working = false;
+        isWorkCycle = false;
     }
     
     /**********************************************************************
@@ -111,7 +121,7 @@ function CycleManager() {
     * Returns: True if current cycle is a work cycle, false if break cycle
     ***********************************************************************/
     function getWorkCycle() {
-        return working;
+        return isWorkCycle;
     }
 
     /**********************************************************************
