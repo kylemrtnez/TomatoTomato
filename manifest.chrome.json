@@ -25,7 +25,11 @@
     ],
 
     "background": {
-        "scripts":["background.js"]
+        "scripts": [
+            "/background/background.js",
+            "/background/CountdownTimer.js",
+            "/background/CycleManager.js"
+        ]
     },
 
     "options_ui": {

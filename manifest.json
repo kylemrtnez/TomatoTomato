@@ -33,9 +33,9 @@
 
     "background": {
         "scripts": [
-            "/background/background.js",
             "/background/CountdownTimer.js",
-            "/background/CycleManager.js"
+            "/background/CycleManager.js",
+            "/background/background.js"
         ]
     },
 
