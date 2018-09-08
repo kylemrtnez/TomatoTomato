@@ -4,7 +4,7 @@
 *               current cycle. Handles logic for switching the cycles.
 ***********************************************************************/
 function CycleManager() {
-    var workCycle = false;
+    var workCycleFlag = false;
     var cycleCount = 0;
     var longBreakFlag = false;
     var longBreakEvery = 4;
@@ -42,12 +42,12 @@ function CycleManager() {
         updateLongBreak();
 
         function toggleCycle() {
-            workCycle = isWorkCycle() ? false : true;
+            workCycleFlag = isWorkCycle() ? false : true;
         }
  
         function updateCycleCount() {
             // increase cycle count once for a work/rest pairing
-            if (workCycle) { incCycleCount(); }
+            if (workCycleFlag) { incCycleCount(); }
         }
    }
 
@@ -86,7 +86,7 @@ function CycleManager() {
     ***********************************************************************/
     function resetCycle() {
         cycleCount = 0;
-        workCycle = false;
+        workCycleFlag = false;
     }
     
     /**********************************************************************
@@ -123,7 +123,7 @@ function CycleManager() {
     * Returns: True if current cycle is a work cycle, false if break cycle
     ***********************************************************************/
     function isWorkCycle() {
-        return workCycle;
+        return workCycleFlag;
     }
 
     /**********************************************************************
