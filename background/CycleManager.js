@@ -96,14 +96,15 @@ function CycleManager() {
     * Returns: cycleCount member variable 
     ***********************************************************************/
     function getCycleNum() {
-        if (cycleCount < 5) {
+        const MAX_CYCLE_COUNT = 4;
+
+        if (cycleCount <= MAX_CYCLE_COUNT) {
             return cycleCount;
         } else {
             return modifyCount();
         }
 
         function modifyCount() {
-            const MAX_CYCLE_COUNT = 4;
             var modifiedCount = cycleCount % MAX_CYCLE_COUNT;
 
             if (modifiedCount == 0) {
