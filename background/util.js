@@ -1,3 +1,6 @@
+const SECONDS = 1000;
+const MINUTES = 60*SECONDS;
+
 // chrome.webRequest.onBeforeRequest.hasListener
 // chrome.webRequest.onBeforeRequest.addListener
 // chrome.webRequest.onBeforeRequest.removeListener
@@ -5,7 +8,8 @@
 function BrowserWrapper() {
     var publicAPI = {
         addMsgListener: addMsgListener,
-        reqListener: RequestsAPI()
+        reqListener: RequestsAPI(),
+        localStorage: LocalStorageAPI()
     };
     return publicAPI;
 
@@ -31,6 +35,22 @@ function BrowserWrapper() {
                 filter,
                 extraInfo
             );
+        }
+    }
+
+    function LocalStorageAPI() {
+        var API = {
+            set: localSet,
+            get: localGet
+        }
+        return API;
+
+        function localSet(keyValuePairs) {
+            chrome.storage.local.set(keyValuePairs);
+        }
+
+        function localGet(key, callback) {
+            chrome.storage.local.get(key, callback); 
         }
     }
 
@@ -67,6 +87,11 @@ function sendNotification(msg) {
         "message":  msg
     });
 }
+
+function minsToSeconds(num) {
+    return num * MINUTES / SECONDS; 
+}
+
 
 function onError(error) {
     console.log(`Error: ${error}`);

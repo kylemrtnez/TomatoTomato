@@ -1,21 +1,38 @@
 'use strict';
 
-const SECONDS = 1000;
-const MINUTES = 60*SECONDS;
-
 var webExtWrapper = BrowserWrapper();
 
 // Set up default options if necessary
-chrome.storage.local.get(['blockPattern'], function(items) {
-    //console.log(items.blockPattern);
-    if(items.blockPattern == null) {
-        chrome.storage.local.set({blockPattern:   {userValue: null, defaultValue: ['*://www.reddit.com/*','*://www.facebook.com/*']},
-                                  workLength:     {userValue: null, defaultValue: 25*MINUTES/SECONDS},
-                                  restLength:     {userValue: null, defaultValue: 5*MINUTES/SECONDS},
-                                  longRestLength: {userValue: null, defaultValue: 25*MINUTES/SECONDS}
-        });
+setUpDefaultPrefs();
+
+function setUpDefaultPrefs() {
+    webExtWrapper.localStorage.get(['blockPattern'], setDefaultPrefsIfNeeded);
+}
+
+function setDefaultPrefsIfNeeded(prefsObj) {
+    if (needDefaultPrefs(prefsObj.blockPattern)) {
+        webExtWrapper.localStorage.set(createDefaultsObj());
+    } 
+
+    function needDefaultPrefs(pref) {
+        return pref == null ? true : false;
     }
-});
+
+    function createDefaultsObj() {
+        let defaultSitesBlocked = ['*://www.reddit.com/*','*://www.facebook.com/*'];
+        let defaultWorkMins = minsToSeconds(25);
+        let defaultRestMins = minsToSeconds(5);
+        let defaultLongRestMins = minsToSeconds(25);
+
+        return { blockPattern:   {userValue: null, defaultValue: defaultSitesBlocked},
+                workLength:     {userValue: null, defaultValue: defaultWorkMins},
+                restLength:     {userValue: null, defaultValue: defaultRestMins},
+                longRestLength: {userValue: null, defaultValue: defaultLongRestMins}
+            };
+    }
+}
+
+
 
 var original = BgReceiver();
 // Listener for message from popup. 
@@ -97,7 +114,6 @@ function BgReceiver() {
     * Returns: None
     ***********************************************************************/
     function blockPages(pattern) {
-        //console.log(pattern);
         webExtWrapper.reqListener.add(
             redirect,
             {urls: pattern}, 
