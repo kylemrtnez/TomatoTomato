@@ -5,9 +5,9 @@ var webExtWrapper = BrowserWrapper();
 // Set up default options if necessary
 setUpDefaultPreferences();
 
-var original = BgReceiver();
+var workingSession = WorkSessionManager();
 // Listener for message from popup. 
-webExtWrapper.addMsgListener(original.decipher);
+webExtWrapper.addMsgListener(workingSession.route);
 
 /**********************************************************************
 * Description: Sets up a listener for web requests and redirects sites on
@@ -15,7 +15,7 @@ webExtWrapper.addMsgListener(original.decipher);
 * Parameters: None 
 * Returns: None 
 ***********************************************************************/
-function BgReceiver() {
+function WorkSessionManager() {
     var myCountdown = null;
     var cycleTracker = CycleManager();
 
@@ -26,34 +26,20 @@ function BgReceiver() {
     * Parameters: The message object from onMessage listener
     * Returns: None
     ***********************************************************************/
-    function decode(message) {
+    function routeMessage(message) {
         switch (message.action) {
             case 'block':
                 cycleTracker.toggle();
 
                 if (!webExtWrapper.reqListener.exists(redirect)) {
-                    // Get the stored block patterns and work session length and start blocking
-                    webExtWrapper.localStorage.get(["blockPattern", "workLength"], (item) => {
-                        // Block the pages
-                        blockPages( item.blockPattern.userValue || item.blockPattern.defaultValue );
-                        
-                        // Create a countdown timer and start it
-                        myCountdown = createTimer(item.workLength.userValue || item.workLength.defaultValue);
-                        myCountdown.start();
-
-                        // Inform menu immediately of changes
-                        sendMenuMsg(myCountdown.getTime(), cycleTracker.cycleNum(), cycleTracker.isWorking());
-                    }); // TODO: Stop timer if there's an error. Would the timer have started if we reach this error callback?
+                    startWorkSession(myCountdown, cycleTracker);
                 }
                 break;
 
             case 'unblock':
-                // Stop the countdown, reset the cycle count, unblock the pages, and send an update to menu
-                myCountdown.stop();
-                myCountdown = null;
-                cycleTracker.reset();
-                unblockPages();
-                sendMenuMsg(null, cycleTracker.cycleNum(), cycleTracker.isWorking());
+                /* Stop the countdown, reset the cycle count, unblock the pages, 
+                and send an update to menu */
+                clearWorkSession(myCountdown, cycleTracker);
                 break;
         
             case 'requestUpdate':
@@ -66,13 +52,29 @@ function BgReceiver() {
                 break;
 
             default:
-
                 break;
         }
     }
 
-    function startWorkCycle() {
- 
+    function clearWorkSession(timer, cycleInfo) {
+        timer.stop();
+        timer = null;
+        cycleInfo.reset();
+        unblockPages();
+        sendMenuMsg(null, cycleTracker.cycleNum(), cycleTracker.isWorking());
+    }
+
+
+    function startWorkSession(timer, cycleInfo) {
+        webExtWrapper.localStorage.get(["blockPattern", "workLength"], (item) => {
+            blockPages(selectPreferenceValue(item.blockPattern));
+                    
+            myCountdown = createTimer(selectPreferenceValue(item.workLength));
+            myCountdown.start();
+
+            // Inform menu immediately of changes
+            sendMenuMsg(timer.getTime(), cycleInfo.cycleNum(), cycleInfo.isWorking());
+        }); 
     }
 
    /**********************************************************************
@@ -176,10 +178,13 @@ function BgReceiver() {
 
         return theCountdown;
     }
-    
+
+    function selectPreferenceValue(key) {
+        return key.userValue || key.defaultValue;
+    }
 
     var publicAPI = {
-        decipher: decode
+        route: routeMessage
     };
 
     return publicAPI;
@@ -213,3 +218,4 @@ function setDefaultPrefsIfNeeded(prefsObj) {
             };
     }
 }
+
