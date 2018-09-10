@@ -3,46 +3,11 @@
 var webExtWrapper = BrowserWrapper();
 
 // Set up default options if necessary
-setUpDefaultPrefs();
-
-function setUpDefaultPrefs() {
-    webExtWrapper.localStorage.get(['blockPattern'], setDefaultPrefsIfNeeded);
-}
-
-function setDefaultPrefsIfNeeded(prefsObj) {
-    if (needDefaultPrefs(prefsObj.blockPattern)) {
-        webExtWrapper.localStorage.set(createDefaultsObj());
-    } 
-
-    function needDefaultPrefs(pref) {
-        return pref == null ? true : false;
-    }
-
-    function createDefaultsObj() {
-        let defaultSitesBlocked = ['*://www.reddit.com/*','*://www.facebook.com/*'];
-        let defaultWorkMins = minsToSeconds(25);
-        let defaultRestMins = minsToSeconds(5);
-        let defaultLongRestMins = minsToSeconds(25);
-
-        return { blockPattern:   {userValue: null, defaultValue: defaultSitesBlocked},
-                workLength:     {userValue: null, defaultValue: defaultWorkMins},
-                restLength:     {userValue: null, defaultValue: defaultRestMins},
-                longRestLength: {userValue: null, defaultValue: defaultLongRestMins}
-            };
-    }
-}
-
-
+setUpDefaultPreferences();
 
 var original = BgReceiver();
 // Listener for message from popup. 
 webExtWrapper.addMsgListener(original.decipher);
-// chrome.runtime.onMessage.addListener(original.decipher);
-
-
-
-
-
 
 /**********************************************************************
 * Description: Sets up a listener for web requests and redirects sites on
@@ -68,7 +33,7 @@ function BgReceiver() {
 
                 if (!webExtWrapper.reqListener.exists(redirect)) {
                     // Get the stored block patterns and work session length and start blocking
-                    chrome.storage.local.get(["blockPattern", "workLength"], (item) => {
+                    webExtWrapper.localStorage.get(["blockPattern", "workLength"], (item) => {
                         // Block the pages
                         blockPages( item.blockPattern.userValue || item.blockPattern.defaultValue );
                         
@@ -106,7 +71,11 @@ function BgReceiver() {
         }
     }
 
-    /**********************************************************************
+    function startWorkCycle() {
+ 
+    }
+
+   /**********************************************************************
     * blockPages
     * Description: Sets up a listener for web requests and redirects sites
     *               on list to an extension html page.
@@ -158,7 +127,7 @@ function BgReceiver() {
             if (cycleTracker.isLongBreak()) {
                 var notificationMessage = "Congrats on the hard work! Take a long break.";
 
-                chrome.storage.local.get("longRestLength",(item) => {
+                webExtWrapper.localStorage.get("longRestLength",(item) => {
                     unblockPages();
                     myCountdown = createTimer(item.longRestLength.userValue || item.longRestLength.defaultValue); 
                     myCountdown.start();
@@ -167,7 +136,7 @@ function BgReceiver() {
             } else {
                 var notificationMessage = "Congrats on the hard work! Take a short break.";
 
-                chrome.storage.local.get("restLength", (item) => {
+                webExtWrapper.localStorage.get("restLength", (item) => {
                     unblockPages();
                     myCountdown = createTimer(item.restLength.userValue || item.restLength.defaultValue); 
                     myCountdown.start();
@@ -179,13 +148,13 @@ function BgReceiver() {
             // switching to working cycle
             cycleTracker.toggle();
 
-            chrome.storage.local.get(["blockPattern", "workLength"], (item) => {
+            webExtWrapper.localStorage.get(["blockPattern", "workLength"], (item) => {
                 blockPages( item.blockPattern.userValue || item.blockPattern.defaultValue );
                 myCountdown = createTimer(item.workLength.userValue || item.workLength.defaultValue);
                 myCountdown.start();
             });
         }
-        chrome.storage.local.get("popups", (item)=> {
+        webExtWrapper.localStorage.get("popups", (item)=> {
             //console.log(item.popups);
             if (item.popups) {
                 sendNotification(notificationMessage);
@@ -217,3 +186,30 @@ function BgReceiver() {
 }
 
 
+function setUpDefaultPreferences() {
+    webExtWrapper.localStorage.get(['blockPattern'], setDefaultPrefsIfNeeded);
+}
+
+function setDefaultPrefsIfNeeded(prefsObj) {
+    if (needDefaultPrefs(prefsObj.blockPattern)) {
+        webExtWrapper.localStorage.set(createDefaultsObj());
+    } 
+
+    function needDefaultPrefs(pref) {
+        return pref == null ? true : false;
+    }
+
+    function createDefaultsObj() {
+        // default settings arbitrarily chosen
+        let defaultSitesBlocked = ['*://www.reddit.com/*','*://www.facebook.com/*'];
+        let defaultWorkMins = minsToSeconds(25);
+        let defaultRestMins = minsToSeconds(5);
+        let defaultLongRestMins = minsToSeconds(25);
+
+        return { blockPattern:   {userValue: null, defaultValue: defaultSitesBlocked},
+                 workLength:     {userValue: null, defaultValue: defaultWorkMins},
+                 restLength:     {userValue: null, defaultValue: defaultRestMins},
+                 longRestLength: {userValue: null, defaultValue: defaultLongRestMins}
+            };
+    }
+}
