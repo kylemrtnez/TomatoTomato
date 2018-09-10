@@ -32,14 +32,17 @@ function WorkSessionManager() {
                 cycleTracker.toggle();
 
                 if (!webExtWrapper.reqListener.exists(redirect)) {
-                    startWorkSession(myCountdown, cycleTracker);
+                    startWorkSession();
                 }
+
+                // TODO: remove this - redundant function call
+                sendMenuMsg(myCountdown.getTime(), cycleTracker.cycleNum(), cycleTracker.isWorking());
                 break;
 
             case 'unblock':
                 /* Stop the countdown, reset the cycle count, unblock the pages, 
                 and send an update to menu */
-                clearWorkSession(myCountdown, cycleTracker);
+                clearSession(myCountdown, cycleTracker);
                 break;
         
             case 'requestUpdate':
@@ -56,26 +59,7 @@ function WorkSessionManager() {
         }
     }
 
-    function clearWorkSession(timer, cycleInfo) {
-        timer.stop();
-        timer = null;
-        cycleInfo.reset();
-        unblockPages();
-        sendMenuMsg(null, cycleTracker.cycleNum(), cycleTracker.isWorking());
-    }
 
-
-    function startWorkSession(timer, cycleInfo) {
-        webExtWrapper.localStorage.get(["blockPattern", "workLength"], (item) => {
-            blockPages(selectPreferenceValue(item.blockPattern));
-                    
-            myCountdown = createTimer(selectPreferenceValue(item.workLength));
-            myCountdown.start();
-
-            // Inform menu immediately of changes
-            sendMenuMsg(timer.getTime(), cycleInfo.cycleNum(), cycleInfo.isWorking());
-        }); 
-    }
 
    /**********************************************************************
     * blockPages
@@ -128,34 +112,20 @@ function WorkSessionManager() {
             // if long break, get long break seconds            
             if (cycleTracker.isLongBreak()) {
                 var notificationMessage = "Congrats on the hard work! Take a long break.";
-
-                webExtWrapper.localStorage.get("longRestLength",(item) => {
-                    unblockPages();
-                    myCountdown = createTimer(item.longRestLength.userValue || item.longRestLength.defaultValue); 
-                    myCountdown.start();
-                });
- 
-            } else {
+                startLongRestSession();
+            } 
+            else {
                 var notificationMessage = "Congrats on the hard work! Take a short break.";
-
-                webExtWrapper.localStorage.get("restLength", (item) => {
-                    unblockPages();
-                    myCountdown = createTimer(item.restLength.userValue || item.restLength.defaultValue); 
-                    myCountdown.start();
-                });
+                startRestSession();
             }
-        } else {
+        } 
+        else {
             var notificationMessage = "Time to get to work!";
-
             // switching to working cycle
             cycleTracker.toggle();
-
-            webExtWrapper.localStorage.get(["blockPattern", "workLength"], (item) => {
-                blockPages( item.blockPattern.userValue || item.blockPattern.defaultValue );
-                myCountdown = createTimer(item.workLength.userValue || item.workLength.defaultValue);
-                myCountdown.start();
-            });
+            startWorkSession();
         }
+
         webExtWrapper.localStorage.get("popups", (item)=> {
             //console.log(item.popups);
             if (item.popups) {
@@ -178,9 +148,45 @@ function WorkSessionManager() {
 
         return theCountdown;
     }
-
+    /**********************************************************************
+    * selectPreferenceValue
+    * Description: Utility function which returns a user set preference or
+    *               the default value when provided with the key.
+    ***********************************************************************/
     function selectPreferenceValue(key) {
         return key.userValue || key.defaultValue;
+    }
+
+    function startWorkSession() {
+        webExtWrapper.localStorage.get(["blockPattern", "workLength"], (item) => {
+            blockPages(selectPreferenceValue(item.blockPattern));
+            myCountdown = createTimer(selectPreferenceValue(item.workLength));
+            myCountdown.start();
+        }); 
+    }
+
+    function startRestSession() {
+        webExtWrapper.localStorage.get("restLength", (item) => {
+            unblockPages();
+            myCountdown = createTimer(selectPreferenceValue(item.restLength)); 
+            myCountdown.start();
+        });
+    }
+
+    function startLongRestSession() {
+        webExtWrapper.localStorage.get("longRestLength",(item) => {
+            unblockPages();
+            myCountdown = createTimer(selectPreferenceValue(item.longRestLength)); 
+            myCountdown.start();
+        });
+    }
+
+    function clearSession(timer, cycleInfo) {
+        timer.stop();
+        timer = null;
+        cycleInfo.reset();
+        unblockPages();
+        sendMenuMsg(null, cycleTracker.cycleNum(), cycleTracker.isWorking());
     }
 
     var publicAPI = {
@@ -189,7 +195,6 @@ function WorkSessionManager() {
 
     return publicAPI;
 }
-
 
 function setUpDefaultPreferences() {
     webExtWrapper.localStorage.get(['blockPattern'], setDefaultPrefsIfNeeded);
