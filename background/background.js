@@ -3,6 +3,8 @@
 const SECONDS = 1000;
 const MINUTES = 60*SECONDS;
 
+var webExtWrapper = BrowserWrapper();
+
 // Set up default options if necessary
 chrome.storage.local.get(['blockPattern'], function(items) {
     //console.log(items.blockPattern);
@@ -17,36 +19,13 @@ chrome.storage.local.get(['blockPattern'], function(items) {
 
 var original = BgReceiver();
 // Listener for message from popup. 
-chrome.runtime.onMessage.addListener(original.decipher);
+webExtWrapper.addMsgListener(original.decipher);
+// chrome.runtime.onMessage.addListener(original.decipher);
 
-function onError(error) {
-    console.log(`Error: ${error}`);
-}
 
-function sendNotification(msg) {
-    chrome.notifications.create("cycle-notification", {
-        "type":     "basic",
-        "title":    "Cycle complete!",
-        "iconUrl":  chrome.extension.getURL("icons/pomo48.png"),
-        "message":  msg
-    });
-}
-/**********************************************************************
-* sendMenuMsg
-* Description: Sends a message to the popup menu telling it
-                whether to listen/block web requests or not.
-* Parameters: seconds = sends time left to menu.js
-* Returns: None
-***********************************************************************/
-function sendMenuMsg(seconds, count, workingFlag) {
-    var contents = {
-        timeLeft: seconds,
-        cycCount: count,
-        cycWorking: workingFlag
-    };
 
-    chrome.runtime.sendMessage(contents);
-}
+
+
 
 /**********************************************************************
 * Description: Sets up a listener for web requests and redirects sites on
@@ -70,7 +49,7 @@ function BgReceiver() {
             case 'block':
                 cycleTracker.toggle();
 
-                if (!chrome.webRequest.onBeforeRequest.hasListener(redirect)) {
+                if (!webExtWrapper.reqListener.exists(redirect)) {
                     // Get the stored block patterns and work session length and start blocking
                     chrome.storage.local.get(["blockPattern", "workLength"], (item) => {
                         // Block the pages
@@ -119,8 +98,7 @@ function BgReceiver() {
     ***********************************************************************/
     function blockPages(pattern) {
         //console.log(pattern);
-
-        chrome.webRequest.onBeforeRequest.addListener(
+        webExtWrapper.reqListener.add(
             redirect,
             {urls: pattern}, 
             ["blocking"]
@@ -143,7 +121,7 @@ function BgReceiver() {
     * Returns: None
     ***********************************************************************/
     function unblockPages() {
-        chrome.webRequest.onBeforeRequest.removeListener(redirect);
+        webExtWrapper.reqListener.remove(redirect);
     }
 
     /**********************************************************************
