@@ -10,7 +10,6 @@
 ***********************************************************************/
 function CountdownTimer() {
     var countdownLength = null; // length of timer in seconds
-    var timeoutIds = [];   // stores timeoutIDs to be cancelled if paused
     var countdownFunc = null;
     var intervalID = null;
 
@@ -42,8 +41,8 @@ function CountdownTimer() {
     * Parameters:  theFunc = the function to be called at end of countdown
     * Returns: None
     ***********************************************************************/
-    function setCountdownFunc(theFunc) {
-        countdownFunc = theFunc;
+    function setCountdownFunc(endOfTimerFunc) {
+        countdownFunc = endOfTimerFunc;
     }
 
     /**********************************************************************
@@ -58,7 +57,6 @@ function CountdownTimer() {
         // timer
         intervalID = window.setInterval(()=> {
             timeLeft--;
-
             setTimer(timeLeft);
 
             if (timeLeft <= 0) {
