@@ -35,6 +35,7 @@
         "scripts": [
             "/background/CountdownTimer.js",
             "/background/CycleManager.js",
+            "/background/BrowserWrapper.js",
             "/background/util.js",
             "/background/background.js"
         ]
