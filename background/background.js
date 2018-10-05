@@ -59,8 +59,6 @@ function WorkSessionManager() {
         }
     }
 
-
-
    /**********************************************************************
     * blockPages
     * Description: Sets up a listener for web requests and redirects sites
@@ -69,6 +67,8 @@ function WorkSessionManager() {
     * Returns: None
     ***********************************************************************/
     function blockPages(pattern) {
+        var orange = "#ff670f";
+        webExtWrapper.setBadgeColor(orange);
         webExtWrapper.reqListener.add(
             redirect,
             {urls: pattern}, 
@@ -92,7 +92,9 @@ function WorkSessionManager() {
     * Returns: None
     ***********************************************************************/
     function unblockPages() {
+        var blue = "#4292f4";
         webExtWrapper.reqListener.remove(redirect);
+        webExtWrapper.setBadgeColor(blue);
     }
 
     /**********************************************************************
@@ -105,31 +107,36 @@ function WorkSessionManager() {
     * Returns: None 
     ***********************************************************************/
     function endOfTimer() {
+        var notificationMessage;
+        var notificationSound;
         // check if on break, if not, start break timer and flip onBreak
         if (cycleTracker.isWorking()) {
             // switching to break cycle
             cycleTracker.toggle();
             // if long break, get long break seconds            
             if (cycleTracker.isLongBreak()) {
-                var notificationMessage = "Congrats on the hard work! Take a long break.";
+                notificationMessage = "Congrats on the hard work! Take a long break.";
+                notificationSound = REST_SOUND;
                 startLongRestSession();
             } 
             else {
-                var notificationMessage = "Congrats on the hard work! Take a short break.";
+                notificationMessage = "Congrats on the hard work! Take a short break.";
+                notificationSound = REST_SOUND;
                 startRestSession();
             }
         } 
         else {
-            var notificationMessage = "Time to get to work!";
+            notificationMessage = "Time to get to work!";
+            notificationSound = WORK_SOUND;
             // switching to working cycle
             cycleTracker.toggle();
             startWorkSession();
         }
 
         webExtWrapper.localStorage.get("popups", (item)=> {
-            //console.log(item.popups);
             if (item.popups) {
                 sendNotification(notificationMessage);
+                playAudioNotification(notificationSound);
             }
         });
     }
