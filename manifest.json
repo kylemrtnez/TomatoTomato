@@ -32,7 +32,13 @@
     ],
 
     "background": {
-        "scripts":["background.js"]
+        "scripts": [
+            "/background/CountdownTimer.js",
+            "/background/CycleManager.js",
+            "/background/BrowserWrapper.js",
+            "/background/util.js",
+            "/background/background.js"
+        ]
     },
 
     "options_ui": {

@@ -1,5 +1,4 @@
 {
-
     "manifest_version": 2,
     "name": "TomatoTomato",
     "version": "1.1",
@@ -25,7 +24,11 @@
     ],
 
     "background": {
-        "scripts":["background.js"]
+        "scripts": [
+            "/background/background.js",
+            "/background/CountdownTimer.js",
+            "/background/CycleManager.js"
+        ]
     },
 
     "options_ui": {
