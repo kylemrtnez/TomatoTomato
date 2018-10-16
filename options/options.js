@@ -158,21 +158,25 @@ popupNotif.addEventListener("change", ()=> {
 ***********************************************************************/
 function restoreDefaults(event) {
     console.log("restore defaults");
-    //For each data member, set userValue to null
-    var gettingStoredSettings = chrome.storage.local.get();
-    gettingStoredSettings.then((userSettings)=> {
-        userSettings.workLength.userValue       = null;
-        userSettings.restLength.userValue       = null;
-        userSettings.longRestLength.userValue   = null;
-        userSettings.blockPattern.userValue     = null;
-        userSettings.popups                     = true;
+    // Set up default values
+    let defaultSitesBlocked = ['*://www.reddit.com/*','*://www.facebook.com/*'];
+    let defaultWorkMins = 25 * MINUTES / SECONDS;
+    let defaultRestMins = 5 * MINUTES / SECONDS;
+    let defaultLongRestMins =25 * MINUTES / SECONDS;
+    
+    // For each data member, set userValue to null
+    var userSettings = { 
+        blockPattern:   {userValue: null, defaultValue: defaultSitesBlocked},
+        workLength:     {userValue: null, defaultValue: defaultWorkMins},
+        restLength:     {userValue: null, defaultValue: defaultRestMins},
+        longRestLength: {userValue: null, defaultValue: defaultLongRestMins}
+    };
 
-        // Save settings
-        chrome.storage.local.set(userSettings);
+    // Save settings
+    chrome.storage.local.set(userSettings);
 
-        // Update the page
-        restoreOptions();
-    });
+    // Update the page
+    restoreOptions();
 }
 
 // Adds website to list (does not affect saved data)
@@ -305,7 +309,7 @@ function restoreOptions() {
     }
   
     // Grabs the settings, then tells it to update input field w that data
-    chrome.storage.local.get(null,updateUI);
+    chrome.storage.local.get(null, updateUI);
 }
 
 /**********************************************************************
