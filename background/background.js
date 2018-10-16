@@ -28,24 +28,20 @@ function WorkSessionManager() {
     ***********************************************************************/
     function routeMessage(message) {
         switch (message.action) {
-            case 'block':
+            case 'block': {
                 cycleTracker.toggle();
-
                 if (!webExtWrapper.reqListener.exists(redirect)) {
                     startWorkSession();
                 }
-
-                // TODO: remove this - redundant function call
-                sendMenuMsg(myCountdown.getTime(), cycleTracker.cycleNum(), cycleTracker.isWorking());
                 break;
-
-            case 'unblock':
+            }
+            case 'unblock': {
                 /* Stop the countdown, reset the cycle count, unblock the pages, 
                 and send an update to menu */
                 clearSession(myCountdown, cycleTracker);
                 break;
-        
-            case 'requestUpdate':
+            }
+            case 'requestUpdate': {
                 if (myCountdown == null) {
                     sendMenuMsg(null, cycleTracker.cycleNum(), cycleTracker.isWorking());
                 } 
@@ -53,9 +49,10 @@ function WorkSessionManager() {
                     sendMenuMsg(myCountdown.getTime(), cycleTracker.cycleNum(), cycleTracker.isWorking());
                 }
                 break;
-
-            default:
+            }
+            default: {
                 break;
+            }
         }
     }
 
