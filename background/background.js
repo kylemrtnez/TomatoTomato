@@ -64,8 +64,9 @@ function WorkSessionManager() {
     * Returns: None
     ***********************************************************************/
     function blockPages(pattern) {
-        var orange = "#ff670f";
-        webExtWrapper.setBadgeColor(orange);
+        // TODO: keep badges out for now - add back once components are more separated
+        //var orange = "#ff670f";
+        //webExtWrapper.setBadgeColor(orange);
         webExtWrapper.reqListener.add(
             redirect,
             {urls: pattern}, 
@@ -89,9 +90,10 @@ function WorkSessionManager() {
     * Returns: None
     ***********************************************************************/
     function unblockPages() {
-        var blue = "#4292f4";
+        // TODO: keep badges out for now - add back once components are more separated
+        //var blue = "#4292f4";
+        //webExtWrapper.setBadgeColor(blue);
         webExtWrapper.reqListener.remove(redirect);
-        webExtWrapper.setBadgeColor(blue);
     }
 
     /**********************************************************************
@@ -210,7 +212,7 @@ function setDefaultPrefsIfNeeded(prefsObj) {
     } 
 
     function needDefaultPrefs(pref) {
-        return pref == null ? true : false;
+        return pref === null ? true : false;
     }
 
     function createDefaultsObj() {
