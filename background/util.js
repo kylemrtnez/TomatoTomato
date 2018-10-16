@@ -1,3 +1,5 @@
+'use strict';
+
 const SECONDS = 1000;
 const MINUTES = 60*SECONDS;
 const WORK_SOUND = 'start-work-cycle';

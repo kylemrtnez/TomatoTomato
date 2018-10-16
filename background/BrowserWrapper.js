@@ -1,3 +1,4 @@
+'use strict';
 /**********************************************************************
 * CycleManager
 * Description: A module which tracks Pomodoro cycles and can return the
