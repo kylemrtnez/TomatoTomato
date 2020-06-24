@@ -2,6 +2,6 @@ build/**/*
 dist/**/*
 node_modules/**/*
 **/.DS_Store
-./manifest.chrome.json
-./manifest.firefox.json
-./manifest.json
+manifest.chrome.json
+manifest.firefox.json
+manifest.json
