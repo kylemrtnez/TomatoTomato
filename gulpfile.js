@@ -91,6 +91,6 @@ function firefoxdist() {
 module.exports = {
   'clean': clean,
   'build': series(clean, build), 
-  'dist': series(build,chromedist, firefoxdist),
-  'default': series(clean, build, chromedist, firefoxdist)
+  'dist': series(chromedist, firefoxdist),
+  'default': series(clean, build)
 };
