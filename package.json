@@ -1,0 +1,24 @@
+{
+  "name": "tomatotomato",
+  "version": "1.1.0",
+  "description": "A Pomodoro/Focus timer extension that blocks distracting websites during your work sessions.",
+  "main": "manifest.json",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kylemrtnez/TomatoTomato.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kylemrtnez/TomatoTomato/issues"
+  },
+  "homepage": "https://github.com/kylemrtnez/TomatoTomato#readme",
+  "devDependencies": {
+    "del": "^5.1.0",
+    "gulp": "^4.0.2",
+    "gulp-zip": "^5.0.1"
+  }
+}
