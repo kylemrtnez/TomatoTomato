@@ -8,3 +8,22 @@ Key Features:
 
 Pomodoro™/Focus Timer extension for Mozilla and Chrome. The Pomodoro Technique® and Pomodoro™ are registered trademarks of Francesco Cirillo. 
 
+## Development
+Install dependencies by running:
+```
+npm install
+```
+
+To build for all targets, run:
+```
+gulp
+```
+
+This will generate the manifest files for Chrome and Firefox and copy them to the appropriate subdirectory in `build/` 
+
+To generate `*.zip` files for distribution, run:
+```
+gulp dist
+```
+
+Which will zip up the releases into the `dist/` directory with the version number defined in `manifest.master.json` appended to the filenames. 
