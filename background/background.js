@@ -212,7 +212,7 @@ function setDefaultPrefsIfNeeded(prefsObj) {
     } 
 
     function needDefaultPrefs(pref) {
-        return pref === null ? true : false;
+        return pref === null || pref === undefined ? true : false;
     }
 
     function createDefaultsObj() {
